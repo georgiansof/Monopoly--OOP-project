@@ -1,4 +1,4 @@
-#include "../headers/game.h"
+#include "../headers/Game.hpp"
 #include <iostream>
 
 Game::Game() {
@@ -18,11 +18,11 @@ void Game::clearInstance() {
     delete Game::instance;
 }
 
-void Game::init() {
+void Game::initWindow() {
 #ifdef __linux__
     XInitThreads();
 #endif
-    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
+    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     ///window.setFramerateLimit(60);
 }

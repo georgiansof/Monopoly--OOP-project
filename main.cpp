@@ -1,21 +1,19 @@
-#include <iostream>
-#include <chrono>
-#include <thread>
+/// global includes
 
-#ifdef __linux__
-#include <X11/Xlib.h>
-#endif
 /**--------------------------------------------------**/
 
-#include "headers/game.h"
+#include "headers/Game.hpp"
 
 /**--------------------------------------------------**/
 
 Game* Game::instance = nullptr;
 
 int main() {
-    Game::getInstance().init();
+    Game::getInstance().initWindow();
     Game::getInstance().loop();
+
+
+
     Game::clearInstance();
     return 0;
 }
