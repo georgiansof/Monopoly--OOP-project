@@ -3,14 +3,15 @@
 
 Game::Game() {
     Game::instance = nullptr;
+    this->details = "MonOOPoly game by georgiansof";
 }
 
-Game & Game::getInstance() {
+Game* Game::getInstancePtr() {
     if(Game::instance != nullptr)
-        return *Game::instance;
+        return Game::instance;
     else {
         Game::instance = new Game;
-        return *Game::instance;
+        return Game::instance;
     }
 }
 
@@ -51,4 +52,21 @@ void Game::loop() {
         window.clear();
         window.display();
     }
+}
+
+ResourceManager* Game::getResourceManagerPtr() {
+    return &resourceManager;
+}
+
+SceneManager* Game::getSceneManagerPtr() {
+    return &sceneManager;
+}
+
+void Game::draw(const sf::Sprite & sprite) {
+    this->window.draw(sprite);
+}
+
+std::ostream& operator<< (std::ostream& os, const Game& game) {
+    os << game.details << '\n';
+    return os;
 }

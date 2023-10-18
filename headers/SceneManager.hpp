@@ -18,11 +18,12 @@ private:
     friend Game;
 public:
     void AddSprite(const char* name, const sf::Texture & texture);
-    void AddSprite(const char* name, sf::Sprite *spritePtr);
+    void AddSprite(const char* name, sf::Sprite * spritePtr);
     void AddAudio(const char* name, const sf::SoundBuffer & audio);
-    void AddAudio(const char* name, sf::Sound *audioPtr);
+    void AddAudio(const char* name, sf::Sound * audioPtr);
     const sf::Sprite & GetSprite(const char* name) const;
-    const sf::Sound & GetAudio(const char* name) const;
+    sf::Sound & GetAudio(const char* name);
+    friend std::ostream& operator<< (std::ostream & os, const SceneManager & sceneManager);
 };
 
 #endif //OOP_SCENEMANAGER_HPP

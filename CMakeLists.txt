@@ -109,11 +109,8 @@ endif()
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${PROJECT_NAME} main.cpp
-        headers/Game.hpp
         sources/Game.cpp
-        headers/ResourceManager.hpp
         sources/ResourceManager.cpp
-        headers/SceneManager.hpp
         sources/SceneManager.cpp
 )
 
@@ -137,7 +134,7 @@ message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996 /external:anglebrackets /external:W0)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -static-libgcc -static-libstdc++)
 endif()
 
 # set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)

@@ -20,14 +20,19 @@ private:
     ~Game() = default;
     static Game* instance;
 
+    std::string details;
     sf::RenderWindow window;
     ResourceManager resourceManager;
     SceneManager sceneManager;
 public:
-    static Game & getInstance();
+    ResourceManager* getResourceManagerPtr();
+    SceneManager* getSceneManagerPtr();
+    static Game * getInstancePtr();
     static void clearInstance();
     void initWindow();
     void loop();
+    void draw(const sf::Sprite & sprite);
+    friend std::ostream& operator<< (std::ostream& os, const Game& game); /// prints game details
 };
 
 #endif //OOP_GAME_H
