@@ -12,6 +12,7 @@
 #include <thread>
 
 #include "ResourceManager.hpp"
+#include "SceneManager.hpp"
 
 class Game {
 private:
@@ -20,8 +21,8 @@ private:
     static Game* instance;
 
     sf::RenderWindow window;
-    //ResourceManager resourceManager;
-
+    ResourceManager resourceManager;
+    SceneManager sceneManager;
 public:
     static Game & getInstance();
     static void clearInstance();
