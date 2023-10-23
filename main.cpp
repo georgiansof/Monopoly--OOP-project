@@ -37,7 +37,7 @@ public:
         strcpy(c, obj.c);
     }
     ~tema() {
-        delete c;
+        delete[] c;
     }
     void setString(const char *str) {
         strcpy(c, str);

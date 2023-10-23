@@ -18,11 +18,11 @@ private:
     friend Game;
 public:
     const sf::Texture & AddTexture(const char* name, const std::string & path);
-    const sf::SoundBuffer & AddSound(const char* name, const std::string & path);
+    //const sf::SoundBuffer & AddSound(const char* name, const std::string & path);
     const sf::Texture & AddTexture(const char* name, const char* path);
-    const sf::SoundBuffer & AddSound(const char* name, const char* path);
-    const sf::Texture & getTexture(const char* name) const;
-    const sf::SoundBuffer & getSound(const char* name) const;
+    //const sf::SoundBuffer & AddSound(const char* name, const char* path);
+    //const sf::Texture & getTexture(const char* name) const;
+    //const sf::SoundBuffer & getSound(const char* name) const;
     friend std::ostream& operator<< (std::ostream& os, const ResourceManager & resourceManager);
 };
 

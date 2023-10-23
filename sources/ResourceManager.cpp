@@ -46,13 +46,13 @@ const Texture & ResourceManager::AddTexture(const char* name, const string & pat
 
 }*/
 
-const Texture & ResourceManager::getTexture(const char* name) const {
+/*const Texture & ResourceManager::getTexture(const char* name) const {
     auto searchedTextureIterator = textures.find(string(name));
     if (searchedTextureIterator != textures.end())
         return searchedTextureIterator->second;
     else
         throw std::runtime_error(string("Texture #") + string(name) + string("# not found during getter call"));
-}
+}*/
 
 /*const SoundBuffer & ResourceManager::getSound(const char* name) const {
     auto searchedSoundIterator = sounds.find(string(name));
