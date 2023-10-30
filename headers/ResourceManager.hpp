@@ -12,18 +12,18 @@ class Game;
 class ResourceManager {
 private:
     std::map<std::string, sf::Texture> textures;
-    std::map<std::string, sf::SoundBuffer> sounds;
+    std::map<std::string, sf::SoundBuffer> audios;
     ResourceManager() = default;
     ~ResourceManager();
     friend Game;
 public:
-    const sf::Texture & AddTexture(const char* name, const std::string & path);
-    //const sf::SoundBuffer & AddSound(const char* name, const std::string & path);
-    const sf::Texture & AddTexture(const char* name, const char* path);
-    //const sf::SoundBuffer & AddSound(const char* name, const char* path);
-    //const sf::Texture & getTexture(const char* name) const;
-    //const sf::SoundBuffer & getSound(const char* name) const;
-    friend std::ostream& operator<< (std::ostream& os, const ResourceManager & resourceManager);
+    const sf::Texture & addTexture(const char* name, const std::string & path);
+    const sf::SoundBuffer & addAudio(const char* name, const std::string & path);
+    const sf::Texture & addTexture(const char* name, const char* path);
+    const sf::SoundBuffer & addAudio(const char* name, const char* path);
+    const sf::Texture & getTexture(const char* name) const;
+    const sf::SoundBuffer & getAudio(const char* name) const;
+    friend std::ostream& operator<< (std::ostream& os, const ResourceManager & resourceManager) noexcept;
 };
 
 #endif //OOP_RESOURCEMANAGER_HPP

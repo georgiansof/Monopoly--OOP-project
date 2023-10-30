@@ -8,20 +8,20 @@ ResourceManager::~ResourceManager() {
         delete &texture;
     textures.clear();
 
-    for(auto &sound : sounds)
-        delete &sound;
-    sounds.clear();
+    for(auto &audio : audios)
+        delete &audio;
+    audios.clear();
 }
 
-const Texture & ResourceManager::AddTexture(const char* name, const char* path) {
-    return this->AddTexture(name, string(path));
+const Texture & ResourceManager::addTexture(const char* name, const char* path) {
+    return this->addTexture(name, string(path));
 }
 
-/*const SoundBuffer & ResourceManager::AddSound(const char* name, const char* path) {
-    return this->AddSound(name, string(path));
-}*/
+const SoundBuffer & ResourceManager::addAudio(const char* name, const char* path) {
+    return this->addAudio(name, string(path));
+}
 
-const Texture & ResourceManager::AddTexture(const char* name, const string & path) {
+const Texture & ResourceManager::addTexture(const char* name, const string & path) {
     auto textureMapPair = new pair<string, Texture>;
     textureMapPair->first = string(name);
     if(!textureMapPair->second.loadFromFile(path))
@@ -33,45 +33,45 @@ const Texture & ResourceManager::AddTexture(const char* name, const string & pat
         throw std::runtime_error("Fatal error: Insertion of " + string(path) + " did not take place.");
 }
 
-/*const SoundBuffer & ResourceManager::AddSound(const char* name, const string & path) {
-    auto soundMapPair = new pair<string, SoundBuffer>;
-    soundMapPair->first = string(name);
-    if(!soundMapPair->second.loadFromFile(path))
+const SoundBuffer & ResourceManager::addAudio(const char* name, const string & path) {
+    auto audioMapPair = new pair<string, SoundBuffer>;
+    audioMapPair->first = string(name);
+    if(!audioMapPair->second.loadFromFile(path))
         throw std::runtime_error(string("Fatal error: File at ") + path + " not found or nonaccessible !");
-    auto insertionResult = sounds.emplace(std::move(*soundMapPair));
+    auto insertionResult = audios.emplace(std::move(*audioMapPair));
     if(insertionResult.second)
         return insertionResult.first->second;
     else
         throw std::runtime_error("Fatal error: Insertion of " + string(path) + " did not take place.");
 
-}*/
+}
 
-/*const Texture & ResourceManager::getTexture(const char* name) const {
+const Texture & ResourceManager::getTexture(const char* name) const {
     auto searchedTextureIterator = textures.find(string(name));
     if (searchedTextureIterator != textures.end())
         return searchedTextureIterator->second;
     else
         throw std::runtime_error(string("Texture #") + string(name) + string("# not found during getter call"));
-}*/
+}
 
-/*const SoundBuffer & ResourceManager::getSound(const char* name) const {
-    auto searchedSoundIterator = sounds.find(string(name));
-    if(searchedSoundIterator != sounds.end())
-        return searchedSoundIterator->second;
+const SoundBuffer & ResourceManager::getAudio(const char* name) const {
+    auto searchedAudioIterator = audios.find(string(name));
+    if(searchedAudioIterator != audios.end())
+        return searchedAudioIterator->second;
     else
-        throw std::runtime_error(string("Sound #") + string(name) + string("# not found during getter call"));
-}*/
+        throw std::runtime_error(string("Audio #") + string(name) + string("# not found during getter call"));
+}
 
-ostream& operator<< (ostream & os, const ResourceManager & resourceManager) {
+ostream& operator<< (ostream & os, const ResourceManager & resourceManager) noexcept {
     os << "*** Resource Manager:\n";
     os << "Textures:\n";
     for(auto& texture : resourceManager.textures)
         os << ' ' << texture.first << '\n';
     os <<"-- \n";
 
-    os << "\nSounds:\n";
-    for(auto & sound : resourceManager.sounds)
-        os << ' ' << sound.first << '\n';
+    os << "\nAudios:\n";
+    for(auto & audio : resourceManager.audios)
+        os << ' ' << audio.first << '\n';
     os << " -- \n";
 
     os << '\n';

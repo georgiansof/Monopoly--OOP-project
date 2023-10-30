@@ -25,13 +25,14 @@ private:
     ResourceManager resourceManager;
     SceneManager sceneManager;
 public:
-    ResourceManager* getResourceManagerPtr();
-    SceneManager* getSceneManagerPtr();
+    ResourceManager* getResourceManagerPtr() noexcept;
+    SceneManager* getSceneManagerPtr() noexcept;
     static Game * getInstancePtr();
+    sf::Vector2<unsigned int> getScreenSize() const;
     static void clearInstance();
     void initWindow();
     void loop();
-    void draw(const sf::Sprite & sprite);
+    void draw();
     friend std::ostream& operator<< (std::ostream& os, const Game& game); /// prints game details
 };
 

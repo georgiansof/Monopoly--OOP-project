@@ -1,4 +1,7 @@
-# OOP Template
+# MonOOPoly
+
+Descriere:
+  Replică a jocului Monopoly în format virtual.
 
 ### Tema 0
 

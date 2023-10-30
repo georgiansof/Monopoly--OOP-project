@@ -12,18 +12,18 @@ class Game;
 class SceneManager {
 private:
     std::map<std::string, sf::Sprite> sprites;
-    std::map<std::string, sf::Sound> audios;
+    std::map<std::string, sf::Sound> sounds;
     SceneManager() = default;
     ~SceneManager();
     friend Game;
 public:
-    void AddSprite(const char* name, const sf::Texture & texture);
-    //void AddSprite(const char* name, sf::Sprite * spritePtr);
-    //void AddAudio(const char* name, const sf::SoundBuffer & audio);
-    //void AddAudio(const char* name, sf::Sound * audioPtr);
-    const sf::Sprite & GetSprite(const char* name) const;
-    //sf::Sound & GetAudio(const char* name);
-    friend std::ostream& operator<< (std::ostream & os, const SceneManager & sceneManager);
+    sf::Sprite & addSprite(const char* name, const sf::Texture & texture);
+    sf::Sprite & addSprite(const char* name, sf::Sprite * spritePtr);
+    sf::Sound & addSound(const char* name, const sf::SoundBuffer & audio);
+    sf::Sound & addSound(const char* name, sf::Sound * soundPtr);
+    sf::Sprite & getSpriteReference(const char* name);
+    sf::Sound & getSoundReference(const char* name);
+    friend std::ostream& operator<< (std::ostream & os, const SceneManager & sceneManager) noexcept;
 };
 
 #endif //OOP_SCENEMANAGER_HPP

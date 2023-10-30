@@ -46,27 +46,33 @@ void Game::loop() {
                     break;
             }
         }
-        ///using namespace std::chrono_literals;
-        ///std::this_thread::sleep_for(2000ms);
+        //using namespace std::chrono_literals;
+        //std::this_thread::sleep_for(1000ms);
 
         window.clear();
+        this->draw();
         window.display();
     }
 }
 
-ResourceManager* Game::getResourceManagerPtr() {
+ResourceManager* Game::getResourceManagerPtr() noexcept {
     return &resourceManager;
 }
 
-SceneManager* Game::getSceneManagerPtr() {
+SceneManager* Game::getSceneManagerPtr() noexcept {
     return &sceneManager;
-}
-
-void Game::draw(const sf::Sprite & sprite) {
-    this->window.draw(sprite);
 }
 
 std::ostream& operator<< (std::ostream& os, const Game& game) {
     os << game.details << '\n';
     return os;
+}
+
+void Game::draw() {
+    for(const auto &spritePair : this->sceneManager.sprites)
+        window.draw(spritePair.second);
+}
+
+sf::Vector2<unsigned int> Game::getScreenSize() const {
+    return window.getSize();
 }

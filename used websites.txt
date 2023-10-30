@@ -1,2 +1,5 @@
 sfml-dev.org
 stackoverflow.com
+
+table arrangement info ->
+https://www.inyourpocket.com/bucharest/Bucharest-Monopoly_70037f
