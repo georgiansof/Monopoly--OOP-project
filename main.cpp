@@ -27,7 +27,6 @@ int main() {
     board.setScale((float)game->getScreenSize().x / board.getLocalBounds().width,
                    (float)game->getScreenSize().y / board.getLocalBounds().height);
 
-
     cout<<*game;
     cout<<*resourceManager;
     cout<<*sceneManager;

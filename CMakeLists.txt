@@ -112,6 +112,8 @@ add_executable(${PROJECT_NAME} main.cpp
         sources/Game.cpp
         sources/ResourceManager.cpp
         sources/SceneManager.cpp
+        sources/BoardTile.cpp
+        sources/Property.cpp
 )
 
 ###############################################################################

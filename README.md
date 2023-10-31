@@ -1,7 +1,22 @@
 # MonOOPoly
 
-Descriere:
-  Replică a jocului Monopoly în format virtual.
+Description:
+  Monopoly virtual replica with Europolis economy and cards.
+  
+  BoardTile class hierarchy tree (yet to finish):
+
+           -----------   BoardTile  ------------------
+          /           /       |       \                \
+         /           /        |        \                \
+       Jail     Property   TaxTile   ParkTile          Chance
+                  / | \             (GoToJail?)   (Chest or Surprise)
+                 /  |  \                
+                /   |   \            
+               /    |    \
+              /     |     \
+    Neighborhood  Factory  TrainStation
+
+  Board class will use a list of BoardTiles with overloaded iterator in order to create a circular list. There will be a circular iterator for each player. The type of the tile will be determined with **dynamic_cast** if the class doesn't contain a type attribute.
 
 ### Tema 0
 
@@ -28,7 +43,7 @@ Descriere:
 ## Tema 2
 
 #### Cerințe
-- [ ] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
+- [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
 - [ ] moșteniri:
   - minim o clasă de bază și **3 clase derivate**
   - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
@@ -36,16 +51,16 @@ Descriere:
   - [ ] funcții virtuale (pure) apelate prin pointeri de bază din clasa care conține atributul de tip pointer de bază
     - minim o funcție virtuală va fi **specifică temei** (e.g. nu simple citiri/afișări)
     - constructori virtuali (clone): sunt necesari, dar nu se consideră funcții specifice temei
-  - [ ] apelarea constructorului din clasa de bază din constructori din derivate
+  - [x] apelarea constructorului din clasa de bază din constructori din derivate
   - [ ] smart pointers (recomandat, opțional)
   - [ ] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
 - [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
 - [ ] excepții
   - [ ] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim 2 clase pentru erori specifice
   - [ ] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`
-- [ ] funcții și atribute `static`
-- [ ] STL
-- [ ] cât mai multe `const`
+- [x] funcții și atribute `static`
+- [x] STL
+- [x] cât mai multe `const`
 - [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, pe lângă cele 3 derivate deja adăugate
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
 - [ ] tag de `git`: de exemplu `v0.2`

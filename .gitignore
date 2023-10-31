@@ -6,6 +6,9 @@
 build.sh
 run.sh
 
+.idea
+.vscode
+
 ### assets ###
 
 textures
