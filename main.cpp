@@ -11,6 +11,9 @@
 
 Game* Game::instance = nullptr;
 
+std::vector<ChanceCard*> ChanceTile::adminBudgetCards;
+std::vector<ChanceCard*> ChanceTile::supriseCards;
+
 using namespace std;
 using namespace sf;
 

@@ -1,7 +1,7 @@
 # MonOOPoly
 
 Description:
-  Monopoly virtual replica with Europolis economy and cards.
+  Bucharest Monopoly virtual replica with various changes.
   
   BoardTile class hierarchy tree (yet to finish):
 
@@ -16,7 +16,7 @@ Description:
               /     |     \
     Neighborhood  Factory  TrainStation
 
-  Board class will use a list of BoardTiles with overloaded iterator in order to create a circular list. There will be a circular iterator for each player. The type of the tile will be determined with **dynamic_cast** if the class doesn't contain a type attribute.
+  Board class will use a circular list of BoardTiles. The type of the tile will be determined using runtime polymorphism.
 
 ### Tema 0
 

@@ -1,0 +1,130 @@
+[
+  {
+    "description_ro": "Organizezi un eveniment cu vanzare de prajituri pentru scoala din cartier.",
+    "description_en": "You're arranging an event with cake selling for the neighborhood school.",
+    "type": "Money",
+    "sum": 25
+  },
+
+  {
+    "description_ro": "Prietenii tai blanosi de la adapostul pentru animale vor fi recunoscatori.",
+    "description_en": "Your fluffy friends from the animal shelter will thank you.",
+    "type": "Money",
+    "sum": -50
+  },
+
+  {
+    "description_ro": "Dai bairam ca vecinii sa se cunoasca intre ei si ceri taxa de intrare. Incaseaza 10 de la fiecare jucator.",
+    "description_en": "You're holding a party for neighbor bonding and you request entry tax. Take 10 from every player.",
+    "type": "PayToAll",
+    "sum": -10
+  },
+
+  {
+    "description_ro": "Donezi sange si primesti cashback la STB si Metrorex.",
+    "description_en": "You're donating blood and receive cashback for STB and Metrorex.",
+    "type": "Money",
+    "sum": 10
+  },
+
+  {
+    "description_ro": "Asculti povestile din tinerete ale vecinului pensionar si iti da 100 de sanatatea fiicei lui.",
+    "description_en": "You listen to your neighbor's teenage stories and he gives you 100 to the health of his daughter.",
+    "type": "Money",
+    "sum": 100
+  },
+
+  {
+    "description_ro": "Cumperi doua gume la bucata in Pipera",
+    "description_en": "You're buying two chewing gums in Pipera",
+    "type": "Money",
+    "sum": -50
+  },
+
+  {
+    "description_ro": "Te-au prins fara bilet in tramvai fix inainte sa te dai jos si primesti suprataxa.",
+    "description_en": "You've been caught with no ticket in the tram right when leaving and receive overtax.",
+    "type": "Money",
+    "sum": -80
+  },
+
+  {
+    "description_ro": "Ti-a respins o fata intalnirea si te apuci de sala sa te faci mare. Dureaza doua ture si banii se retin la START.",
+    "description_en": "One girl rejected your date and you're subscribing to the gym to get big. It lasts two laps and the fee is retained at START.",
+    "type": "Subscription",
+    "amount": 100
+  },
+
+  {
+    "description_ro": "Dai un shot in club si nu observi ca barmanul a trecut un 0 in plus pe POS.",
+    "description_en": "You're buying a shot in the club and you don't notice that the barman set one extra 0 on the POS.",
+    "type": "Money",
+    "sum": -150
+  },
+
+  {
+    "description_ro": "Te-a convins prietenul tau sa bagi 10 la aparate si castigi.",
+    "description_en": "You're gambling 10 because your buddy said so and you win.",
+    "type": "Money",
+    "sum": 200
+  },
+
+  {
+    "description_ro": "Duci masina la spalatorie automata si uiti sa inchizi geamurile. Stai o tura sa o impingi la service si platesti 100.",
+    "description_en": "You go to automatic car wash and forget to raise the windows. Wait a turn to push it to the service and pay 100.",
+    "type": "WaitTurnAndPay",
+    "amount": 100
+  },
+
+  {
+    "description_ro": "Ajuti vecina sa care cumparaturile si iti gateste in schimb, scapandu-te de o cheltuiala.",
+    "description_en": "You help your neighbor carry the bags from the supermarket and she cooks for you in change.",
+    "type": "Money",
+    "sum": 10
+  },
+
+  {
+    "description_ro": "Termini scoala si raman bani la fondul clasei.",
+    "description_en": "You finish school and there are leftover money from the class budget.",
+    "type": "Money",
+    "sum": 100
+  },
+
+  {
+    "description_ro": "Primesti subventie sa platesti reparatia calculatorului de la serviciu, dar il repari singur si pastrezi restul.",
+    "description_en": "You receive a grant to pay work computer repair, but you repair it yourself and keep the change.",
+    "type": "Money",
+    "sum": 100
+  },
+
+  {
+    "description_ro": "Te alearga un caine pana la START.",
+    "description_en": "A dog chases you to the START.",
+    "type": "MoveToTile",
+    "location": "Start",
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Au venit facturile pe tot anul la proprietati. Platesti 40 pentru fiecare casa detinuta si 115 pentru fiecare hotel.",
+    "description_en": "Annual invoices for all properties. Pay 40 for each house and 115 for each hotel you own",
+    "type": "RepairsAndInvoices",
+    "house_fee": 25,
+    "hotel_fee": 100
+  },
+
+  {
+    "description_ro": "Se plang toti vecinii ca asculti muzica tare noaptea si te baga in inchisoare de data asta.",
+    "description_en": "All your neighbors say that you listen to very loud music at night and you go to jail this time.",
+    "type": "MoveToTile",
+    "location": "Jail",
+    "money_through_start": false
+  },
+
+  {
+    "description_ro": "Prietenul tau se face avocat si te scapa de inchisoare pe gratis o singura data. Nu poti ajuta alti jucatori.",
+    "description_en": "Your friend becomes lawyer and helps you one time if you are accused. You can't help other players.",
+    "type": "JailCard",
+    "sellable": false
+  }
+]

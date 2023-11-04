@@ -11,11 +11,12 @@
 #include "BoardTile.hpp"
 #include "ChanceCards.hpp"
 
-class ChanceTile : protected BoardTile {
+class ChanceTile : public BoardTile {
 public:
-    enum Type {SURPRISE, ADMINISTRATION_BUDGET};
+    enum Type {SURPRISE, COMMUNITY};
 private:
-    static std::vector<ChanceCard*> cards;
+    static std::vector<ChanceCard*> communityCards;
+    static std::vector<ChanceCard*> supriseCards;
     const ChanceTile::Type type;
 public:
     ChanceTile(Type type, unsigned short boardPosition);

@@ -12,10 +12,13 @@
 #include <thread>
 #include <vector>
 
+#include "json.hpp" /// https://github.com/nlohmann/json/
+
 #include "ResourceManager.hpp"
 #include "SceneManager.hpp"
 #include "Player.hpp"
 #include "CircularList.hpp"
+#include "BoardTile.hpp"
 
 class Game {
 private:

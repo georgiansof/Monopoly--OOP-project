@@ -1,0 +1,134 @@
+[
+  {
+    "description_ro": "Amenda pentru depasirea vitezei",
+    "description_en": "Speeding ticket",
+    "type": "Money",
+    "sum": -15
+  },
+
+  {
+    "description_ro": "Mergi la Gara Progresu.",
+    "description_en": "Go to Gara Progresu.",
+    "type": "MoveToTile",
+    "location": "Gara Progresu",
+    "money_through_start": true
+  },
+  {
+    "description_ro": "Esti acuzat pe nedrept si mergi la inchisoare. Daca treci pe la start NU incasezi bani.",
+    "description_en": "You're going to jail even though it was not your fault. You DON'T collect money from start.",
+    "type": "MoveToTile",
+    "location": "Jail",
+    "money_through_start": false
+  },
+
+  {
+    "description_ro": "Imprumutul pentru cladirile tale a ajuns la maturitate.",
+    "description_en": "Mortgage is due.",
+    "type": "Money",
+    "sum": 150
+  },
+
+  {
+    "description_ro": "Avanseaza pana la cea mai apropiata uzina. Daca nu e detinuta, o poti cumpara de la banca. Altfel arunca zarurile si plateste de 10 ori suma lor. Daca treci pe la start primesti bani.",
+    "description_en": "Advance to closest factory. If it is unowned, you can buy it from the bank. Elseway, roll the dices and pay 10x the dices sum. If you pass through start you collect money.",
+    "type": "MoveToFactory",
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Avanseaza pana la cea mai apropiata gara. Daca nu e detinuta, o poti cumpara de la banca. Altfel platesti suprataxa 3x. Daca treci pe la start primesti bani.",
+    "description_en": "Advance to the closest railway station. If it is not owned, you can buy it from the bank. Elseway, pay 3x overtax. If you go through start, you collect money.",
+    "type": "MoveToRailway",
+    "buy_allowed": true,
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Avanseaza la Bulevardul Eroilor. Daca treci prin start primesti bani.",
+    "description_en": "Advance to Bulevardul Eroilor. If you pass through start you collect money.",
+    "type": "MoveToTile",
+    "location": "Bulevardul Eroilor",
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Avanseaza pana la cea mai apropiata gara. Daca nu e detinuta, NU o poti cumpara. Altfel platesti suprataxa 3x. Daca treci pe la start NU primesti bani.",
+    "description_en": "Advance to the closest railway station. If it is not owned, you can NOT buy it. Elseway, pay 3x overtax. If you go through start, you DON'T collect money.",
+    "type": "MoveToRailway",
+    "buy_allowed": false,
+    "money_through_start": false
+  },
+
+  {
+    "description_ro": "Avanseaza la Bulevardul Primaverii.",
+    "description_en": "Advance to Bulevardul Primaverii",
+    "type": "MoveToTile",
+    "location": "Bulevardul Primaverii",
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Avanseaza la Titan.",
+    "description_en": "Advance to Titan.",
+    "type": "MoveToTile",
+    "location": "Titan",
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Intoarce-te 3 spatii.",
+    "description_en": "Go back 3 tiles.",
+    "type": "MoveSpaces",
+    "count": -3
+  },
+
+  {
+    "description_ro": "Avanseaza 2 spatii.",
+    "description_en": "Go forward 2 tiles.",
+    "type": "MoveSpaces",
+    "count": 2
+  },
+
+  {
+    "description_ro": "Ai fost prins cu evaziune fiscala pe banii de la START. Mergi inapoi la start si returnezi banii.",
+    "description_en": "You have been caught doing tax evasion with the money from START. Go back to start and return the money.",
+    "type": "TaxEvasion"
+  },
+
+  {
+    "description_ro": "Incasezi dividende",
+    "description_en": "You collect dividends",
+    "type": "Money",
+    "sum": 50
+  },
+
+  {
+    "description_ro": "Avanseaza la START",
+    "description_en": "Advance to START",
+    "type": "MoveToTile",
+    "location": "START",
+    "money_through_start": true
+  },
+
+  {
+    "description_ro": "Efectuezi reparatii la toate proprietatile. Platesti 25 pentru fiecare casa si 100 pentru fiecare hotel.",
+    "description_en": "You're doing repairs at all your properties. You pay 25 for each house and 100 for each hotel.",
+    "type": "RepairsAndInvoices",
+    "house_fee": 25,
+    "hotel_fee": 100
+  },
+
+  {
+    "description_ro": "Ai fost ales presedintele consiliului. Platesti 50 fiecarui jucator.",
+    "description_en": "You've been chosen as council president. Pay 50 to each player.",
+    "type": "PayToAll",
+    "sum": 50
+  },
+
+  {
+    "description_ro": "Cu acest card poti iesi gratuit oricand din inchisoare. Il poti folosi o singura data si il poti vinde.",
+    "description_en": "With this card you can exit jail for free anytime, one time use. It can be sold.",
+    "type": "JailCard",
+    "sellable": true
+  }
+]

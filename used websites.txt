@@ -1,5 +1,6 @@
 sfml-dev.org
 stackoverflow.com
 
-table arrangement info ->
-https://www.inyourpocket.com/bucharest/Bucharest-Monopoly_70037f
+table arrangement info -> https://www.inyourpocket.com/bucharest/Bucharest-Monopoly_70037f
+
+json lib -> https://github.com/nlohmann/json/
