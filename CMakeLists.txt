@@ -114,6 +114,9 @@ add_executable(${PROJECT_NAME} main.cpp
         sources/SceneManager.cpp
         sources/BoardTile.cpp
         sources/Property.cpp
+        sources/ChanceTile.cpp
+        sources/Player.cpp
+        sources/CircularList.cpp
 )
 
 ###############################################################################

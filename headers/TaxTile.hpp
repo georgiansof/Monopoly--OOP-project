@@ -13,11 +13,10 @@ public:
 private:
     const uint32_t amount;
     const TaxTile::Type type;
-protected:
+public:
     TaxTile(TaxTile::Type type, unsigned short boardPosition, unsigned int amount)
             : BoardTile(boardPosition, TAX), amount(amount), type(type) {}
-    [[nodiscard]] uint32_t getPrice() const noexcept;
-public:
+    [[nodiscard]] uint32_t getAmount() const noexcept;
     TaxTile() = delete;
     ~TaxTile() = default;
 };

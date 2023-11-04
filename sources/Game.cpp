@@ -76,3 +76,7 @@ void Game::draw() {
 sf::Vector2<unsigned int> Game::getScreenSize() const {
     return window.getSize();
 }
+
+void Game::addPlayer(Player *playerPtr) {
+    this->players.pushbackElement(playerPtr);
+}

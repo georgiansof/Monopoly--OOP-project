@@ -17,9 +17,9 @@ private:
     const uint32_t price;
 protected:
     Property(std::string & name, Type type, unsigned short boardPosition, unsigned int price)
-        : BoardTile(boardPosition, PROPERTY), price(price), type(type), name(name) {}
+        : BoardTile(boardPosition, PROPERTY), type(type), name(name), price(price)  {}
     Property(const char *name, Type type, unsigned short boardPosition, unsigned int price)
-        : BoardTile(boardPosition, PROPERTY), price(price), type(type), name(name) {}
+        : BoardTile(boardPosition, PROPERTY), type(type), name(name), price(price) {}
 public:
     [[nodiscard]] uint32_t getPrice() const noexcept;
     Property() = delete;

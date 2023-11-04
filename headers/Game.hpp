@@ -10,9 +10,12 @@
 #endif
 #include <chrono>
 #include <thread>
+#include <vector>
 
 #include "ResourceManager.hpp"
 #include "SceneManager.hpp"
+#include "Player.hpp"
+#include "CircularList.hpp"
 
 class Game {
 private:
@@ -24,6 +27,8 @@ private:
     sf::RenderWindow window;
     ResourceManager resourceManager;
     SceneManager sceneManager;
+
+    CircularList<Player*> players;
 public:
     ResourceManager* getResourceManagerPtr() noexcept;
     SceneManager* getSceneManagerPtr() noexcept;
@@ -34,6 +39,8 @@ public:
     void loop();
     void draw();
     friend std::ostream& operator<< (std::ostream& os, const Game& game); /// prints game details
+
+    void addPlayer(Player *playerPtr);
 };
 
 #endif //OOP_GAME_H
