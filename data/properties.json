@@ -2,6 +2,7 @@
   {
     "name": "Rahova",
     "price": 60,
+    "position": 1,
     "zero_rent": 2,
     "one_rent": 10,
     "two_rent": 30,
@@ -13,6 +14,7 @@
   {
     "name": "Giulesti",
     "price": 60,
+    "position": 3,
     "zero_rent": 4,
     "one_rent": 20,
     "two_rent": 60,
@@ -26,6 +28,7 @@
   {
     "name": "Vitan",
     "price": 100,
+    "position": 6,
     "zero_rent": 6,
     "one_rent": 30,
     "two_rent": 90,
@@ -37,6 +40,7 @@
   {
     "name": "Pantelimon",
     "price": 100,
+    "position": 8,
     "zero_rent": 6,
     "one_rent": 30,
     "two_rent": 90,
@@ -48,6 +52,7 @@
   {
     "name": "Berceni",
     "price": 120,
+    "position": 9,
     "zero_rent": 8,
     "one_rent": 40,
     "two_rent": 100,
@@ -61,6 +66,7 @@
   {
     "name": "Titan",
     "price": 140,
+    "position": 11,
     "zero_rent": 10,
     "one_rent": 50,
     "two_rent": 150,
@@ -72,6 +78,7 @@
   {
     "name": "Colentina",
     "price": 140,
+    "position": 13,
     "zero_rent": 10,
     "one_rent": 50,
     "two_rent": 150,
@@ -83,6 +90,7 @@
   {
     "name": "Tei",
     "price": 160,
+    "position": 14,
     "zero_rent": 12,
     "one_rent": 60,
     "two_rent": 180,
@@ -97,6 +105,7 @@
   {
     "name": "Bd Timisoara",
     "price": 180,
+    "position": 16,
     "zero_rent": 14,
     "one_rent": 70,
     "two_rent": 200,
@@ -108,6 +117,7 @@
   {
     "name": "Bd Brasov",
     "price": 180,
+    "position": 18,
     "zero_rent": 14,
     "one_rent": 70,
     "two_rent": 200,
@@ -119,6 +129,7 @@
   {
     "name": "Drumul Taberei",
     "price": 200,
+    "position": 19,
     "zero_rent": 16,
     "one_rent": 80,
     "two_rent": 220,
@@ -132,6 +143,7 @@
   {
     "name": "Bd Carol",
     "price": 220,
+    "position": 21,
     "zero_rent": 18,
     "one_rent": 90,
     "two_rent": 250,
@@ -143,6 +155,7 @@
   {
     "name": "Mihail Kogalniceanu",
     "price": 220,
+    "position": 23,
     "zero_rent": 18,
     "one_rent": 90,
     "two_rent": 250,
@@ -154,6 +167,7 @@
   {
     "name": "Eroilor",
     "price": 240,
+    "position": 24,
     "zero_rent": 20,
     "one_rent": 100,
     "two_rent": 300,
@@ -167,6 +181,7 @@
   {
     "name": "Nicolae Titulescu",
     "price": 260,
+    "position": 26,
     "zero_rent": 22,
     "one_rent": 110,
     "two_rent": 330,
@@ -178,6 +193,7 @@
   {
     "name": "1 Mai",
     "price": 260,
+    "position": 27,
     "zero_rent": 22,
     "one_rent": 110,
     "two_rent": 330,
@@ -189,6 +205,7 @@
   {
     "name": "Dorobanti",
     "price": 280,
+    "position": 29,
     "zero_rent": 24,
     "one_rent": 120,
     "two_rent": 360,
@@ -202,6 +219,7 @@
   {
     "name": "Unirii",
     "price": 300,
+    "position": 31,
     "zero_rent": 26,
     "one_rent": 130,
     "two_rent": 390,
@@ -213,6 +231,7 @@
   {
     "name": "Cotroceni",
     "price": 300,
+    "position": 32,
     "zero_rent": 26,
     "one_rent": 130,
     "two_rent": 390,
@@ -224,6 +243,7 @@
   {
     "name": "Victoriei",
     "price": 320,
+    "position": 34
     "zero_rent": 28,
     "one_rent": 150,
     "two_rent": 450,
@@ -237,6 +257,7 @@
   {
     "name": "Magheru",
     "price": 350,
+    "position": 37,
     "zero_rent": 35,
     "one_rent": 175,
     "two_rent": 500,
@@ -248,6 +269,7 @@
   {
     "name": "Primaverii",
     "price": 400,
+    "position": 39,
     "zero_rent": 50,
     "one_rent": 200,
     "two_rent": 600,
@@ -257,7 +279,7 @@
   },
 
   {
-    "name": "Gara",
+    "name": "Gara Progresu",
     "price": 200,
     "one_fee": 25,
     "two_fee": 50,
@@ -266,7 +288,43 @@
   },
 
   {
-    "name": "Uzina",
+    "name": "Gara Obor",
+    "price": 200,
+    "one_fee": 25,
+    "two_fee": 50,
+    "three_fee": 100,
+    "four_fee": 200
+  },
+
+  {
+    "name": "Gara Basarab",
+    "price": 200,
+    "one_fee": 25,
+    "two_fee": 50,
+    "three_fee": 100,
+    "four_fee": 200
+  },
+
+  {
+    "name": "Gara de Nord",
+    "price": 200,
+    "one_fee": 25,
+    "two_fee": 50,
+    "three_fee": 100,
+    "four_fee": 200
+  },
+
+
+
+  {
+    "name": "Uzina electrica",
+    "price": 150,
+    "one_multiplier": 4,
+    "two_multiplier": 10
+  },
+
+  {
+    "name": "Uzina de apa",
     "price": 150,
     "one_multiplier": 4,
     "two_multiplier": 10
