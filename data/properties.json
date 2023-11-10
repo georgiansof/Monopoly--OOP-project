@@ -1,0 +1,274 @@
+[
+  {
+    "name": "Rahova",
+    "price": 60,
+    "zero_rent": 2,
+    "one_rent": 10,
+    "two_rent": 30,
+    "three_rent": 90,
+    "four_rent": 160,
+    "hotel_rent": 250
+  },
+
+  {
+    "name": "Giulesti",
+    "price": 60,
+    "zero_rent": 4,
+    "one_rent": 20,
+    "two_rent": 60,
+    "three_rent": 180,
+    "four_rent": 320,
+    "hotel_rent": 450
+  },
+
+
+
+  {
+    "name": "Vitan",
+    "price": 100,
+    "zero_rent": 6,
+    "one_rent": 30,
+    "two_rent": 90,
+    "three_rent": 270,
+    "four_rent": 400,
+    "hotel_rent": 550
+  },
+
+  {
+    "name": "Pantelimon",
+    "price": 100,
+    "zero_rent": 6,
+    "one_rent": 30,
+    "two_rent": 90,
+    "three_rent": 270,
+    "four_rent": 400,
+    "hotel_rent": 550
+  },
+
+  {
+    "name": "Berceni",
+    "price": 120,
+    "zero_rent": 8,
+    "one_rent": 40,
+    "two_rent": 100,
+    "three_rent": 300,
+    "four_rent": 450,
+    "hotel_rent": 600
+  },
+
+
+
+  {
+    "name": "Titan",
+    "price": 140,
+    "zero_rent": 10,
+    "one_rent": 50,
+    "two_rent": 150,
+    "three_rent": 450,
+    "four_rent": 625,
+    "hotel_rent": 750
+  },
+
+  {
+    "name": "Colentina",
+    "price": 140,
+    "zero_rent": 10,
+    "one_rent": 50,
+    "two_rent": 150,
+    "three_rent": 450,
+    "four_rent": 625,
+    "hotel_rent": 750
+  },
+
+  {
+    "name": "Tei",
+    "price": 160,
+    "zero_rent": 12,
+    "one_rent": 60,
+    "two_rent": 180,
+    "three_rent": 500,
+    "four_rent": 700,
+    "hotel_rent": 900
+  },
+
+
+
+
+  {
+    "name": "Bd Timisoara",
+    "price": 180,
+    "zero_rent": 14,
+    "one_rent": 70,
+    "two_rent": 200,
+    "three_rent": 550,
+    "four_rent": 750,
+    "hotel_rent": 950
+  },
+
+  {
+    "name": "Bd Brasov",
+    "price": 180,
+    "zero_rent": 14,
+    "one_rent": 70,
+    "two_rent": 200,
+    "three_rent": 550,
+    "four_rent": 750,
+    "hotel_rent": 950
+  },
+
+  {
+    "name": "Drumul Taberei",
+    "price": 200,
+    "zero_rent": 16,
+    "one_rent": 80,
+    "two_rent": 220,
+    "three_rent": 600,
+    "four_rent": 800,
+    "hotel_rent": 1000
+  },
+
+
+
+  {
+    "name": "Bd Carol",
+    "price": 220,
+    "zero_rent": 18,
+    "one_rent": 90,
+    "two_rent": 250,
+    "three_rent": 700,
+    "four_rent": 875,
+    "hotel_rent": 1050
+  },
+
+  {
+    "name": "Mihail Kogalniceanu",
+    "price": 220,
+    "zero_rent": 18,
+    "one_rent": 90,
+    "two_rent": 250,
+    "three_rent": 700,
+    "four_rent": 875,
+    "hotel_rent": 1050
+  },
+
+  {
+    "name": "Eroilor",
+    "price": 240,
+    "zero_rent": 20,
+    "one_rent": 100,
+    "two_rent": 300,
+    "three_rent": 750,
+    "four_rent": 925,
+    "hotel_rent": 1100
+  },
+
+
+
+  {
+    "name": "Nicolae Titulescu",
+    "price": 260,
+    "zero_rent": 22,
+    "one_rent": 110,
+    "two_rent": 330,
+    "three_rent": 800,
+    "four_rent": 975,
+    "hotel_rent": 1150
+  },
+
+  {
+    "name": "1 Mai",
+    "price": 260,
+    "zero_rent": 22,
+    "one_rent": 110,
+    "two_rent": 330,
+    "three_rent": 800,
+    "four_rent": 975,
+    "hotel_rent": 1150
+  },
+
+  {
+    "name": "Dorobanti",
+    "price": 280,
+    "zero_rent": 24,
+    "one_rent": 120,
+    "two_rent": 360,
+    "three_rent": 850,
+    "four_rent": 1025,
+    "hotel_rent": 1200
+  },
+
+
+
+  {
+    "name": "Unirii",
+    "price": 300,
+    "zero_rent": 26,
+    "one_rent": 130,
+    "two_rent": 390,
+    "three_rent": 900,
+    "four_rent": 1100,
+    "hotel_rent": 1275
+  },
+
+  {
+    "name": "Cotroceni",
+    "price": 300,
+    "zero_rent": 26,
+    "one_rent": 130,
+    "two_rent": 390,
+    "three_rent": 900,
+    "four_rent": 1100,
+    "hotel_rent": 1275
+  },
+
+  {
+    "name": "Victoriei",
+    "price": 320,
+    "zero_rent": 28,
+    "one_rent": 150,
+    "two_rent": 450,
+    "three_rent": 1000,
+    "four_rent": 1200,
+    "hotel_rent": 1400
+  },
+
+
+
+  {
+    "name": "Magheru",
+    "price": 350,
+    "zero_rent": 35,
+    "one_rent": 175,
+    "two_rent": 500,
+    "three_rent": 1100,
+    "four_rent": 1300,
+    "hotel_rent": 1500
+  },
+
+  {
+    "name": "Primaverii",
+    "price": 400,
+    "zero_rent": 50,
+    "one_rent": 200,
+    "two_rent": 600,
+    "three_rent": 1400,
+    "four_rent": 1700,
+    "hotel_rent": 2000
+  },
+
+  {
+    "name": "Gara",
+    "price": 200,
+    "one_fee": 25,
+    "two_fee": 50,
+    "three_fee": 100,
+    "four_fee": 200
+  },
+
+  {
+    "name": "Uzina",
+    "price": 150,
+    "one_multiplier": 4,
+    "two_multiplier": 10
+  }
+]
