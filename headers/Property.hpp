@@ -7,8 +7,9 @@
 
 #include <string>
 #include "BoardTile.hpp"
+#include <SFML/Graphics.hpp>
 
-class Property : protected BoardTile {
+class Property : public BoardTile {
 public:
     enum Type {NEIGHBORHOOD, TRAIN_STATION, FACTORY};
 private:
@@ -16,10 +17,8 @@ private:
     const std::string name;
     const uint32_t price;
 protected:
-    Property(std::string & name, Type type, unsigned short boardPosition, unsigned int price)
-        : BoardTile(boardPosition, PROPERTY), type(type), name(name), price(price)  {}
-    Property(const char *name, Type type, unsigned short boardPosition, unsigned int price)
-        : BoardTile(boardPosition, PROPERTY), type(type), name(name), price(price) {}
+    Property(std::string & name, Type type, unsigned short boardPosition, unsigned int price);
+    Property(const char *name, Type type, unsigned short boardPosition, unsigned int price);
 public:
     [[nodiscard]] uint32_t getPrice() const noexcept;
     Property() = delete;

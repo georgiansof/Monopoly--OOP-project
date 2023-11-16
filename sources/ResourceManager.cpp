@@ -1,4 +1,5 @@
 #include "../headers/ResourceManager.hpp"
+#include "../headers/CustomExceptions.hpp"
 
 using namespace std;
 using namespace sf;
@@ -25,24 +26,24 @@ const Texture & ResourceManager::addTexture(const char* name, const string & pat
     auto textureMapPair = new pair<string, Texture>;
     textureMapPair->first = string(name);
     if(!textureMapPair->second.loadFromFile(path))
-        throw std::runtime_error(string("Fatal error: File at ") + path + string(" not found or nonaccessible !"));
+        throw fileNotFoundException(path);
     auto insertionResult = textures.emplace(std::move(*textureMapPair));
     if(insertionResult.second)
         return insertionResult.first->second;
     else
-        throw std::runtime_error("Fatal error: Insertion of " + string(path) + " did not take place.");
+        throw insertionFailureException(name);
 }
 
 const SoundBuffer & ResourceManager::addAudio(const char* name, const string & path) {
     auto audioMapPair = new pair<string, SoundBuffer>;
     audioMapPair->first = string(name);
     if(!audioMapPair->second.loadFromFile(path))
-        throw std::runtime_error(string("Fatal error: File at ") + path + " not found or nonaccessible !");
+        throw fileNotFoundException(path);
     auto insertionResult = audios.emplace(std::move(*audioMapPair));
     if(insertionResult.second)
         return insertionResult.first->second;
     else
-        throw std::runtime_error("Fatal error: Insertion of " + string(path) + " did not take place.");
+        throw insertionFailureException(name);
 
 }
 
@@ -51,7 +52,7 @@ const Texture & ResourceManager::getTexture(const char* name) const {
     if (searchedTextureIterator != textures.end())
         return searchedTextureIterator->second;
     else
-        throw std::runtime_error(string("Texture #") + string(name) + string("# not found during getter call"));
+        throw textureNotFoundException(name);
 }
 
 const SoundBuffer & ResourceManager::getAudio(const char* name) const {
@@ -59,7 +60,7 @@ const SoundBuffer & ResourceManager::getAudio(const char* name) const {
     if(searchedAudioIterator != audios.end())
         return searchedAudioIterator->second;
     else
-        throw std::runtime_error(string("Audio #") + string(name) + string("# not found during getter call"));
+        throw audioNotFoundException(name);
 }
 
 ostream& operator<< (ostream & os, const ResourceManager & resourceManager) noexcept {

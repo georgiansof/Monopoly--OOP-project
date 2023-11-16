@@ -1,0 +1,11 @@
+[
+  {
+    "type": "income",
+    "amount": 200
+  },
+
+  {
+    "type": "luxury",
+    "amount": 100
+  }
+]

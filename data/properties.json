@@ -243,7 +243,7 @@
   {
     "name": "Victoriei",
     "price": 320,
-    "position": 34
+    "position": 34,
     "zero_rent": 28,
     "one_rent": 150,
     "two_rent": 450,
@@ -251,7 +251,6 @@
     "four_rent": 1200,
     "hotel_rent": 1400
   },
-
 
 
   {
@@ -280,6 +279,7 @@
 
   {
     "name": "Gara Progresu",
+    "train_index": 1,
     "price": 200,
     "one_fee": 25,
     "two_fee": 50,
@@ -289,6 +289,7 @@
 
   {
     "name": "Gara Obor",
+    "train_index": 2,
     "price": 200,
     "one_fee": 25,
     "two_fee": 50,
@@ -299,6 +300,7 @@
   {
     "name": "Gara Basarab",
     "price": 200,
+    "train_index": 3,
     "one_fee": 25,
     "two_fee": 50,
     "three_fee": 100,
@@ -307,6 +309,7 @@
 
   {
     "name": "Gara de Nord",
+    "train_index": 4,
     "price": 200,
     "one_fee": 25,
     "two_fee": 50,
@@ -314,10 +317,9 @@
     "four_fee": 200
   },
 
-
-
   {
     "name": "Uzina electrica",
+    "factory_type": "electricity",
     "price": 150,
     "one_multiplier": 4,
     "two_multiplier": 10
@@ -325,6 +327,7 @@
 
   {
     "name": "Uzina de apa",
+    "factory_type": "water",
     "price": 150,
     "one_multiplier": 4,
     "two_multiplier": 10

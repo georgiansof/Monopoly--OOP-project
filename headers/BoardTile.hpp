@@ -6,6 +6,8 @@
 #define OOP_BOARDTILE_HPP
 
 #include <cstdint>
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 class BoardTile {
 public:
@@ -14,12 +16,15 @@ private:
     const uint16_t boardPosition;
     const BoardTile::Type type;
 protected:
-    explicit BoardTile(uint16_t boardPosition, BoardTile::Type type = PROPERTY)
-        : boardPosition(boardPosition), type(type) {}
+    sf::Vector2f playerPositions[9];
+    bool occupiedPosition[9];
+    explicit BoardTile(uint16_t boardPosition, BoardTile::Type type);
     [[nodiscard]] uint16_t getBoardPosition() const noexcept;
 public:
+    std::pair<sf::Vector2f, uint8_t> addPlayer(); /// returns the position coordinates and index
     BoardTile() = delete;
     ~BoardTile() = default;
+
 };
 
 

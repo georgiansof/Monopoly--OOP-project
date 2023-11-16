@@ -7,9 +7,9 @@
 
 #include "BoardTile.hpp"
 
-class ParkTile : protected BoardTile {
+class ParkTile : public BoardTile {
 public:
-    enum Type {START, JAIL_VISIT, FREE_PARKING, GO_TO_JAIL};
+    enum Type {START, FREE_PARKING, GO_TO_JAIL};
 private:
     ParkTile::Type type;
 public:

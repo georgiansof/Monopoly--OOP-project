@@ -7,7 +7,7 @@
 
 #include "BoardTile.hpp"
 
-class TaxTile : protected BoardTile {
+class TaxTile : public BoardTile {
 public:
     enum Type {INCOME, LUXURY};
 private:

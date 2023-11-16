@@ -13,11 +13,12 @@
 class Neighborhood : public Property {
 private:
     const sf::Color color;
+    sf::Vector2f housePositions[4];
+    uint8_t houseLevel;
+    uint32_t rentPrice[6];
 public:
-    Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price)
-        : Property(name, Property::Type::NEIGHBORHOOD, boardPosition, price), color(color) {}
-    Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price)
-            : Property(name, Property::Type::NEIGHBORHOOD, boardPosition, price), color(color) {}
+    Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price, uint32_t *rentPrice);
+    Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, uint32_t *rentPrice);
     Neighborhood() = delete;
     ~Neighborhood() = default;
 };
