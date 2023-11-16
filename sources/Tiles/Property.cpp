@@ -1,4 +1,4 @@
-#include "../headers/Property.hpp"
+#include "../../headers/Tiles/Property.hpp"
 
 
 [[nodiscard]] uint32_t Property::getPrice() const noexcept {

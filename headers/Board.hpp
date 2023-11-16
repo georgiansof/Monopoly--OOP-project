@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "../constants.hpp"
-#include "CircularList.hpp"
-#include "BoardTile.hpp"
+#include "DataStructures/CircularList.hpp"
+#include "Tiles/BoardTile.hpp"
 
 class Board {
     std::vector<BoardTile*> tiles;

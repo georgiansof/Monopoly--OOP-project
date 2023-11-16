@@ -7,7 +7,7 @@
 
 #include <vector>
 #include "BoardTile.hpp"
-#include "Player.hpp"
+#include "../Player.hpp"
 
 class Jail : public BoardTile {
     sf::Vector2f playerPositionsImprisoned[9];

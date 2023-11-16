@@ -9,7 +9,7 @@
 #include <string>
 
 #include "BoardTile.hpp"
-#include "ChanceCards.hpp"
+#include "../ChanceCards.hpp"
 
 class ChanceTile : public BoardTile {
 public:

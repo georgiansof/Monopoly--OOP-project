@@ -12,25 +12,25 @@
 #include <thread>
 #include <vector>
 
-#include "json.hpp" /// https://github.com/nlohmann/json/
+#include "external/json.hpp" /// https://github.com/nlohmann/json/
 
 #include "ResourceManager.hpp"
 #include "SceneManager.hpp"
 #include "Player.hpp"
-#include "CircularList.hpp"
+#include "DataStructures/CircularList.hpp"
 #include "Board.hpp"
 
-#include "BoardTile.hpp"
-#include "Jail.hpp"
-#include "Property.hpp"
-#include "TaxTile.hpp"
-#include "ParkTile.hpp"
-#include "ChanceTile.hpp"
-#include "Neighborhood.hpp"
-#include "Factory.hpp"
-#include "TrainStation.hpp"
+#include "Tiles/BoardTile.hpp"
+#include "Tiles/Jail.hpp"
+#include "Tiles/Property.hpp"
+#include "Tiles/TaxTile.hpp"
+#include "Tiles/ParkTile.hpp"
+#include "Tiles/ChanceTile.hpp"
+#include "Tiles/Neighborhood.hpp"
+#include "Tiles/Factory.hpp"
+#include "Tiles/TrainStation.hpp"
 
-#include "CustomExceptions.hpp"
+#include "DataStructures/CustomExceptions.hpp"
 
 class Game {
 private:

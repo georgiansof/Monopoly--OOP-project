@@ -1,4 +1,4 @@
-#include "../headers/BoardTile.hpp"
+#include "../../headers/Tiles/BoardTile.hpp"
 #include <iostream>
 
 using namespace std;

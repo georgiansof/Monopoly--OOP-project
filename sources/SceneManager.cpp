@@ -1,5 +1,5 @@
 #include "../headers/SceneManager.hpp"
-#include "../headers/CustomExceptions.hpp"
+#include "../headers/DataStructures/CustomExceptions.hpp"
 
 using namespace std;
 using namespace sf;

@@ -8,7 +8,7 @@
 #include <exception>
 #include <cstring>
 #include <string>
-#include "../constants.hpp"
+#include "../../constants.hpp"
 
 class playerCountException : public std::exception {
     std::string lastInsertedName;

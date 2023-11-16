@@ -109,17 +109,16 @@ endif()
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${PROJECT_NAME} main.cpp
-        sources/CircularList.cpp
         sources/Game.cpp
         sources/ResourceManager.cpp
         sources/SceneManager.cpp
-        sources/BoardTile.cpp
-        sources/Property.cpp
-        sources/ChanceTile.cpp
+        sources/Tiles/BoardTile.cpp
+        sources/Tiles/Property.cpp
+        sources/Tiles/ChanceTile.cpp
         sources/Player.cpp
-        sources/Jail.cpp
+        sources/Tiles/Jail.cpp
         sources/Board.cpp
-        sources/Neighborhood.cpp
+        sources/Tiles/Neighborhood.cpp
 )
 
 ###############################################################################

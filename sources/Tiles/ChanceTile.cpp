@@ -1,4 +1,4 @@
-#include "../headers/ChanceTile.hpp"
+#include "../../headers/Tiles/ChanceTile.hpp"
 
 using namespace std;
 

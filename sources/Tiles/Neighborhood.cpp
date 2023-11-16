@@ -1,7 +1,7 @@
 //
 // Created by je_gi on 2023-11-16.
 //
-#include "../headers/Neighborhood.hpp"
+#include "../../headers/Tiles/Neighborhood.hpp"
 
 float propertyHouseOffsetX[4] = {0.005, 0.025, 0.045, 0.065};
 float propertyHouseOffsetY = 0.12;

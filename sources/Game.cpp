@@ -3,9 +3,9 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include <random>
-#include "../headers/json.hpp"
+#include "../headers/external/json.hpp"
 #include "../constants.hpp"
-#include "../headers/CustomExceptions.hpp"
+#include "../headers/DataStructures/CustomExceptions.hpp"
 
 using json = nlohmann::json;
 

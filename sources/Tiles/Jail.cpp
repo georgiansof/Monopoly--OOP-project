@@ -1,7 +1,7 @@
 //
 // Created by je_gi on 2023-11-16.
 //
-#include "../headers/Jail.hpp"
+#include "../../headers/Tiles/Jail.hpp"
 
 float jailTilePlayerPositionsInsideOffsets[3] = {0.06, 0.09, 0.12};
 
