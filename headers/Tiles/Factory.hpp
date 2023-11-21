@@ -13,7 +13,7 @@ private:
 public:
     Factory(Factory::Type type, unsigned short boardPosition, unsigned int price, uint32_t feeMultiplierWithOne, uint32_t feeMultiplierWithTwo)
             : Property(type == WATER ? "Water Factory" : "Electricity Factory",
-                       Property::Type::NEIGHBORHOOD, boardPosition, price),
+                       Property::Type::FACTORY, boardPosition, price),
              type(type), feeMultiplierWithOne(feeMultiplierWithOne),
              feeMultiplierWithTwo(feeMultiplierWithTwo) {}
     Factory() = delete;

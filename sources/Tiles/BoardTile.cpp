@@ -7,7 +7,7 @@ using namespace sf;
 float bigTilePlayerPositionOffsets[3] = {0.03, 0.06, 0.09};
 
 float normalTilePlayerPositionOffsetsX[2] = {0.02, 0.06};
-float normalTilePlayerPositionOffsetsY[4] = {0.02, 0.4, 0.06, 0.08};
+float normalTilePlayerPositionOffsetsY[4] = {0.02, 0.04, 0.06, 0.08};
 
 
 Vector2f jailOutsidePlayerPositions[8] = {
@@ -27,8 +27,8 @@ unsigned short BoardTile::getBoardPosition() const noexcept {
 
 BoardTile::BoardTile(uint16_t boardPosition, BoardTile::Type type)
         : boardPosition(boardPosition), type(type) {
-    for(auto &pos : occupiedPosition)
-        pos = false;
+    for(auto &p : occupiedPositions)
+        p = nullptr;
 
     float normalTileSize = 0.08;
     float bigTileSize = 0.13;
@@ -97,11 +97,21 @@ BoardTile::BoardTile(uint16_t boardPosition, BoardTile::Type type)
     }
 }
 
-std::pair<sf::Vector2f, uint8_t> BoardTile::addPlayer() {
+std::pair<sf::Vector2f, uint8_t> BoardTile::addPlayer(Player *playerPtr) {
     for(int i = 0 ; i < 9; ++i)
-        if(!occupiedPosition[i]) {
-            occupiedPosition[i] = true;
+        if(!occupiedPositions[i]) {
+            occupiedPositions[i] = playerPtr;
             return {playerPositions[i], i};
         }
     throw std::runtime_error("Under BoardTile::addPlayer, player position inside tile overflow!");
+}
+
+void BoardTile::removePlayer(uint8_t positionInsideTile) {
+    occupiedPositions[positionInsideTile] = nullptr;
+}
+
+void BoardTile::removePlayer(Player *playerPtr) {
+    for(auto& p : this->occupiedPositions)
+        if(p == playerPtr)
+            p = nullptr;
 }

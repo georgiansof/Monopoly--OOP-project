@@ -10,11 +10,10 @@ float normalTileSize = 0.08;
 float bigTileSize = 0.13;
 float borderSize = 0.01;
 
-Neighborhood::Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price, uint32_t *rentPrice)
+Neighborhood::Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice)
         : Property(name, Property::Type::NEIGHBORHOOD, boardPosition, price), color(color) {
     houseLevel = 0;
-
-    for(int i = 0; i < 5; ++i)
+    for(int i = 0; i < 6; ++i)
         this->rentPrice[i] = rentPrice[i];
 
     if(boardPosition >= 1 && boardPosition <= 9)
@@ -42,11 +41,11 @@ Neighborhood::Neighborhood(std::string & name, sf::Color color, unsigned short b
                     borderSize + bigTileSize + normalTileSize * ((float)boardPosition - 31) + propertyHouseOffsetX[y_ind]
             );
 }
-Neighborhood::Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, uint32_t *rentPrice)
+Neighborhood::Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice)
         : Property(name, Property::Type::NEIGHBORHOOD, boardPosition, price), color(color) {
     houseLevel = 0;
 
-    for(int i = 0; i < 5; ++i)
+    for(int i = 0; i < 6; ++i)
         this->rentPrice[i] = rentPrice[i];
 
     if(boardPosition >= 1 && boardPosition <= 9)

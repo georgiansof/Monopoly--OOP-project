@@ -16,7 +16,7 @@ class Board {
 public:
     BoardTile& getTile(int boardPosition);
     void AddTile(BoardTile *boardTilePtr);
-    int getTileCount() const;
+    [[nodiscard]] int getTileCount() const;
 };
 
 #endif //OOP_BOARD_HPP

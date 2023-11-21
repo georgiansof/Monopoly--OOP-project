@@ -22,7 +22,7 @@ public:
     ChanceTile(Type type, unsigned short boardPosition);
     ChanceTile() = delete;
     ~ChanceTile() = default;
-    void drawCard(Type type);
+    //void drawCard(Type type);
 };
 
 #endif //OOP_CHANCETILE_HPP

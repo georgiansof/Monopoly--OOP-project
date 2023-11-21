@@ -118,10 +118,7 @@ sf::Shape & SceneManager::addShape(const char* name, sf::Shape * shapePtr) {
     return this->addShape(string(name), shapePtr);
 }
 sf::Shape & SceneManager::addShape(const std::string & name, sf::Shape * shapePtr) {
-    auto pairPtr = new pair<string, Shape*>;
-    pairPtr->first = name;
-    pairPtr->second = shapePtr;
-    auto insertionResult = shapePointers.emplace(std::move(*pairPtr));
+    auto insertionResult = shapePointers.emplace(name,shapePtr);
     if(insertionResult.second)
         return *insertionResult.first->second;
     else

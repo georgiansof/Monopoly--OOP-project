@@ -3,7 +3,7 @@
 Description:
   Bucharest Monopoly virtual replica with various changes.
   
-  BoardTile class hierarchy tree (yet to finish):
+  BoardTile class hierarchy tree:
 
            -----------   BoardTile  ------------------
           /           /       |       \                \
@@ -16,7 +16,9 @@ Description:
               /     |     \
     Neighborhood  Factory  TrainStation
 
-  Board class will use a circular list of BoardTiles. The type of the tile will be determined using runtime polymorphism.
+  Board class will use a circular list of BoardTiles. Tile types will be stored so it will be safe to use static_cast.
+
+  ChanceCards will use runtime polymorphism.
 
 ### Tema 0
 
@@ -54,7 +56,7 @@ Description:
   - [x] apelarea constructorului din clasa de bază din constructori din derivate
   - [ ] smart pointers (recomandat, opțional)
   - [x] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens (downcast exceptii resMan/SceneMan)
-- [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
+- [x] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap (clasa Player)
 - [x] excepții
   - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim 2 clase pentru erori specifice
   - [x] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`

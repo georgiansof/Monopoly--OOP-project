@@ -16,7 +16,7 @@ private:
 public:
     TaxTile(TaxTile::Type type, unsigned short boardPosition, unsigned int amount)
             : BoardTile(boardPosition, TAX), amount(amount), type(type) {}
-    [[nodiscard]] uint32_t getAmount() const noexcept;
+    //[[nodiscard]] uint32_t getAmount() const noexcept;
     TaxTile() = delete;
     ~TaxTile() = default;
 };

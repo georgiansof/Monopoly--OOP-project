@@ -17,8 +17,8 @@ private:
     uint8_t houseLevel;
     uint32_t rentPrice[6];
 public:
-    Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price, uint32_t *rentPrice);
-    Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, uint32_t *rentPrice);
+    Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice);
+    Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice);
     Neighborhood() = delete;
     ~Neighborhood() = default;
 };

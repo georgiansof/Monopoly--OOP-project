@@ -8,6 +8,50 @@
 #include "../headers/DataStructures/CustomExceptions.hpp"
 
 using json = nlohmann::json;
+using namespace sf;
+using namespace std;
+
+void Game::eventKeyPressed(sf::Keyboard::Key keycode) {
+    if(keycode == Keyboard::Key::Enter) {
+        Player *currentPlayer = *currentPlayerIterator;
+        cout << currentPlayer->getName() << "'s turn: \n";
+        cout << "Position before: " << currentPlayer->getBoardPosition() << '\n';
+        pair<uint8_t,uint8_t> dices;
+        uint8_t timesRolledDouble = 0;
+        int totalMoved = 0;
+        do {
+            dices = Game::diceRoll();
+            if (dices.first == dices.second && timesRolledDouble == 2) {
+                timesRolledDouble = 3;
+                ///jail player
+            }
+            else {
+                if (dices.first == dices.second)
+                    ++timesRolledDouble;
+                board.getTile(currentPlayer->getBoardPosition()).removePlayer(currentPlayer->getIndexInsideTile());
+                auto updatedPosition = currentPlayer->incrementPosition(dices.first + dices.second);
+                totalMoved += (dices.first + dices.second);
+                auto newPositionInsideTile = board.getTile(updatedPosition.first).addPlayer(currentPlayer);
+                currentPlayer->indexInsideTile = newPositionInsideTile.second;
+                newPositionInsideTile.first.x *= (float)this->getScreenSize().x;
+                newPositionInsideTile.first.y *= (float)this->getScreenSize().y;
+                currentPlayer->boardPieceShapePtr->setPosition(newPositionInsideTile.first);
+
+                if(updatedPosition.second) /// went through start
+                    currentPlayer->money += MONEY_FROM_START;
+            }
+        }
+        while(dices.first == dices.second && timesRolledDouble < 3);
+        cout << "Total tiles moved: " << totalMoved << '\n';
+        cout << "Position after: " << currentPlayer->getBoardPosition() << '\n';
+        ++currentPlayerIterator;
+
+    }
+}
+
+void Game::eventKeyReleased(sf::Keyboard::Key keycode) {
+
+}
 
 Game::Game() {
     Game::instance = nullptr;
@@ -48,7 +92,10 @@ void Game::loop() {
                               << "New height: " << window.getSize().y << '\n';
                     break;
                 case sf::Event::KeyPressed:
-                    std::cout << "Received key " << (e.key.code == sf::Keyboard::X ? "X" : "(other)") << "\n";
+                    this->eventKeyPressed(e.key.code);
+                    break;
+                case sf::Event::KeyReleased:
+                    this->eventKeyReleased(e.key.code);
                     break;
                 default:
                     break;
@@ -237,16 +284,16 @@ void Game::addPlayer(Player *playerPtr) {
         throw playerCountException(playerPtr->getName());
 
     this->players.push_back(playerPtr);
-    if(this->currentPlayerIterator == players.end()) /// first inserted player
+    if(players.size() == 1) /// first inserted player
         this->currentPlayerIterator = players.begin();
 
-    auto playerPositionPair = board.getTile(0).addPlayer();
+    auto playerPositionPair = board.getTile(0).addPlayer(playerPtr);
 
     sf::Vector2<float> playerPiecePosition = playerPositionPair.first;
-    playerPtr->setIndexInsideTile(playerPositionPair.second);
+    playerPtr->indexInsideTile = playerPositionPair.second;
 
-    int screenX = (int)this->getScreenSize().x;
-    int screenY = (int)this->getScreenSize().y;
+    float screenX = (float)this->getScreenSize().x;
+    float screenY = (float)this->getScreenSize().y;
 
     playerPiecePosition.x *= screenX;
     playerPiecePosition.y *= screenY;
@@ -258,8 +305,8 @@ void Game::addPlayer(Player *playerPtr) {
     playerPieceShapePtr->setFillColor(playerPtr->getColor());
     playerPieceShapePtr->setOutlineThickness(1.5);
     playerPieceShapePtr->setOutlineColor(sf::Color::Black);
+    playerPtr->boardPieceShapePtr = playerPieceShapePtr;
     this->sceneManager.addShape(std::string("player_") + std::string(playerPtr->getName()), playerPieceShapePtr);
-
     /*
     sf::Vector2<int> playerPieceSize ((int)this->getScreenSize().x / 36, (int)this->getScreenSize().y / 36);
     sf::Rect<int> playerRect(playerPiecePosition,playerPieceSize);
@@ -283,6 +330,7 @@ std::pair<uint8_t,uint8_t> Game::diceRoll() {
     std::uniform_int_distribution<uint8_t> distribution(1,6);
     uint8_t dice1 = distribution(gen);
     uint8_t dice2 = distribution(gen);
+    std::cout<<"Dices: " << int(dice1) << ' ' << int(dice2) << '\n';
     return {dice1,dice2};
 }
 

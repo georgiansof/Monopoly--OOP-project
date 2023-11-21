@@ -59,6 +59,8 @@ public:
     void draw();
     friend std::ostream& operator<< (std::ostream& os, Game& game); /// prints game details
 
+    void eventKeyPressed(sf::Keyboard::Key keycode);
+    void eventKeyReleased(sf::Keyboard::Key keycode);
     void addTiles();
     void addPlayer(Player *playerPtr);
 
