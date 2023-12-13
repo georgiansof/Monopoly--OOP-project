@@ -14,6 +14,7 @@ run.sh
 textures
 sounds
 GIMP
+fonts
 
 ### C++ ###
 # Prerequisites
@@ -222,7 +223,6 @@ dist/
 flycheck_*.el
 
 # server auth directory
-/server/
 
 # projectiles files
 .projectile

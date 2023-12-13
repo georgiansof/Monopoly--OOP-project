@@ -9,36 +9,65 @@
 
 /**--------------------------------------------------**/
 
+sf::Font* Globals::defaultFont = nullptr;
+bool Globals::capsLock = false;
+bool Globals::repeatKeyPressed = false;
+
 Game* Game::instance = nullptr;
+
+sf::Texture* Dice::textures[6];
 
 using namespace std;
 using namespace sf;
 
 int handleFatalException(exception &e) {
     std::cerr << e.what();
-    auto fatalExceptCast = dynamic_cast<fatalException*>(&e);
+    auto fatalExceptCast = dynamic_cast<FatalException*>(&e);
     if(fatalExceptCast == nullptr)
         return UNHANDLED_ERROR_CODE;
     else
         return fatalExceptCast->getExitCode();
 }
 
+
+
+
 int main() {
     Game *game = Game::getInstancePtr();
     ResourceManager *resourceManager = game->getResourceManagerPtr(); /// loads from files
     SceneManager *sceneManager = game->getSceneManagerPtr(); /// stored objects are drawn
+    UIManager *uiManager = game->getuiManagerPtr();
+
     game->initWindow();
 
-    /***************************/
+    resourceManager->addFont("arial","../fonts/arial.ttf");
+    Globals::setDefaultFont(&resourceManager->getFont("arial"));
+
+    resourceManager->addTexture("board", "../textures/board.png");
+    resourceManager->addAudio("coin flip", "../sounds/coin.wav");
+    for(int i = 1; i <= 6; ++i)
+        resourceManager->addTexture(std::string("dice") + to_string(i),
+                                             std::string("../textures/dice") + std::to_string(i) + string(".png"));
+    uiManager->createDices(resourceManager);
+    uiManager->hideDices();
+    game->constructMainMenuUI();
+
+    /*Button b("buton",{0.4f, 0.3f},
+             {0.1f,0.05f},
+             sf::Color::Magenta,
+             true, resourceManager->getFont("arial"),
+             sf::Color::Black,
+             sf::Text::Style::Regular, 20);
+    uiManager->addElement(&b);*/
+
+    ///--------------------------------
+    /*
     try {
-        resourceManager->addTexture("blank", "../textures/blank.png");
-
-        Sprite &board = sceneManager->addSprite("board", resourceManager->addTexture("board", "../textures/board.png"));
-        sceneManager->addSound("coin flip", resourceManager->addAudio("coin flip", "../sounds/coin.wav"));
-
+        Sprite &board = sceneManager->addSprite("board", resourceManager->getTexture("board"));
+        sceneManager->addSound("coin flip", resourceManager->getAudio("coin flip"));
         /// scale board to screen
-        board.setScale((float) game->getScreenSize().x / board.getLocalBounds().width,
-                       (float) game->getScreenSize().y / board.getLocalBounds().height);
+        board.setScale((float) game->getWindowSize().x / board.getLocalBounds().width,
+                       (float) game->getWindowSize().y / board.getLocalBounds().height);
     }
     catch(exception &e) {
         return handleFatalException(e);
@@ -51,7 +80,7 @@ int main() {
         return handleFatalException(e);
     }
 
-    /***************  ADD PLAYERS *******************/
+    ///  ADD PLAYERS
     try {
         game->addPlayer(new Player("Gigi", Color(0, 0, 0), PLAYER_START_MONEY));
         game->addPlayer(new Player("Giani", Color::Yellow));
@@ -65,17 +94,17 @@ int main() {
         game->addPlayer(new Player("Bog", Color::Transparent));
     }
     catch(std::exception &e) {
-        if(dynamic_cast<fatalException*>(&e) == nullptr)
+        if(dynamic_cast<FatalException*>(&e) == nullptr)
             std::cerr << e.what();
         else
             handleFatalException(e);
     }
-    /***************************/
+    ///-----------------------------------
 
     cout<<*game;
     cout<<*resourceManager;
     cout<<*sceneManager;
-
+    */
     game->loop();
     Game::clearInstance();
     return 0;

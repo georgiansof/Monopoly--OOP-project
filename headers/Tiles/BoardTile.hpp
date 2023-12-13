@@ -26,7 +26,7 @@ public:
     void removePlayer(uint8_t positionInsideTile);
     void removePlayer(Player *playerPtr);
     BoardTile() = delete;
-    ~BoardTile() = default;
+    virtual ~BoardTile() = default;
 
 };
 

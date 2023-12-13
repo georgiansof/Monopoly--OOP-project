@@ -47,18 +47,17 @@ public:
                 ++newit;
             return newit;
         }
-
+        friend CircularList;
     };
 
     void push_back(const type_t &value) {
         list.push_back(value);
     }
 
-    void pop_back() {
-        if(!list.empty())
-            list.pop_back();
-        else
-            std::cerr << "The list is already empty !";
+    void removeElement(CircularList<type_t>::iterator &it) {
+        typename std::list<type_t>::iterator l_it = it.it;
+        ++it;
+        this->list.erase(l_it);
     }
 
     iterator begin() {

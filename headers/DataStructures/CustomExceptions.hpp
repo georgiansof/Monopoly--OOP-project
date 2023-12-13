@@ -9,12 +9,13 @@
 #include <cstring>
 #include <string>
 #include "../../constants.hpp"
+#include <typeinfo>
 
-class playerCountException : public std::exception {
+class PlayerCountException : public std::exception {
     std::string lastInsertedName;
 public:
-    playerCountException() = default;
-    explicit playerCountException(std::string lastInsName) : lastInsertedName(std::move(lastInsName)) {}
+    PlayerCountException() = default;
+    explicit PlayerCountException(std::string lastInsName) : lastInsertedName(std::move(lastInsName)) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = "Cannot add one more player, max 8!\n";
         if(!lastInsertedName.empty())
@@ -24,48 +25,67 @@ public:
     }
 };
 
-class fatalException : public std::exception {
+class FatalException : public std::exception {
 private:
     const int exit_code;
 public:
-    fatalException() = delete;
-    explicit fatalException(int exit_code) : exit_code(exit_code) {}
+    FatalException() = delete;
+    explicit FatalException(int exit_code) : exit_code(exit_code) {}
     [[nodiscard]] int getExitCode() const noexcept {return exit_code;}
 };
 
-class fileNotFoundException : public fatalException {
+class SwitchCaseNotCovered : public FatalException {
+public:
+    explicit SwitchCaseNotCovered(int exit_code = SWITCH_CASE_NOT_COVERED_ERROR_CODE) : FatalException(exit_code) {}
+    [[nodiscard]] const char* what() const noexcept override {
+        return "Encountered a fatal uncovered switch case.\n";
+    }
+};
+
+class IndexOutOfBounds : public FatalException {
+    int index;
+    std::string arrayType;
+public:
+    IndexOutOfBounds(int index, std::string arrayType) : FatalException(INDEX_OUT_OF_BOUNDS_ERROR_CODE), index(index), arrayType(std::move(arrayType)) {}
+    [[nodiscard]] const char* what() const noexcept override {
+        static std::string ret = std::string("Index ") + std::to_string(index) + std::string("out of bounds in array of instances of ") + arrayType;
+        return ret.c_str();
+    }
+};
+
+class FileNotFoundException : public FatalException {
 private:
     std::string path;
 public:
-    fileNotFoundException() = delete;
-    explicit fileNotFoundException(const char* path) : fatalException(FILE_MISS_ERROR_CODE), path(path) {}
-    explicit fileNotFoundException(std::string path) : fatalException(FILE_MISS_ERROR_CODE), path(std::move(path)) {}
+    FileNotFoundException() = delete;
+    explicit FileNotFoundException(const char* path) : FatalException(FILE_MISS_ERROR_CODE), path(path) {}
+    explicit FileNotFoundException(std::string path) : FatalException(FILE_MISS_ERROR_CODE), path(std::move(path)) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("File at ") + path + std::string(" not found or inaccesible !");
         return ret.c_str();
     }
 };
 
-class insertionFailureException : public fatalException {
+class InsertionFailureException : public FatalException {
 private:
     std::string name;
 public:
-    insertionFailureException() = delete;
-    explicit insertionFailureException(std::string name) : fatalException(INSERTION_FAILURE_ERROR_CODE), name(std::move(name)) {}
-    explicit insertionFailureException(const char* name) : fatalException(INSERTION_FAILURE_ERROR_CODE), name(name) {}
+    InsertionFailureException() = delete;
+    explicit InsertionFailureException(std::string name) : FatalException(INSERTION_FAILURE_ERROR_CODE), name(std::move(name)) {}
+    explicit InsertionFailureException(const char* name) : FatalException(INSERTION_FAILURE_ERROR_CODE), name(name) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Insertion of ") + std::string(name) + std::string(" did not take place.");
         return ret.c_str();
     }
 };
 
-class assetNotFoundException : public fatalException {
+class AssetNotFoundException : public FatalException {
 protected:
     std::string assetName;
 public:
-    assetNotFoundException() = delete;
-    explicit assetNotFoundException(const char *assetName, int error_code = ASSET_MISS_ERROR_CODE) : fatalException(error_code), assetName(assetName) {}
-    explicit assetNotFoundException(std::string assetName, int error_code = ASSET_MISS_ERROR_CODE) : fatalException(error_code), assetName(std::move(assetName)) {}
+    AssetNotFoundException() = delete;
+    explicit AssetNotFoundException(const char *assetName, int error_code = ASSET_MISS_ERROR_CODE) : FatalException(error_code), assetName(assetName) {}
+    explicit AssetNotFoundException(std::string assetName, int error_code = ASSET_MISS_ERROR_CODE) : FatalException(error_code), assetName(std::move(assetName)) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Asset with name ") + assetName + std::string(" not found during getter call.");
         return ret.c_str();
@@ -73,40 +93,40 @@ public:
 
 };
 
-class textureNotFoundException : public assetNotFoundException {
+class TextureNotFoundException : public AssetNotFoundException {
 public:
-    textureNotFoundException() = delete;
-    explicit textureNotFoundException(const char *textureName) : assetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
-    explicit textureNotFoundException(const std::string & textureName) : assetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
+    TextureNotFoundException() = delete;
+    explicit TextureNotFoundException(const char *textureName) : AssetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
+    explicit TextureNotFoundException(const std::string & textureName) : AssetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Texture with name ") + assetName + std::string(" not found during getter call.");
         return ret.c_str();
     }
 };
 
-class audioNotFoundException : public assetNotFoundException {
+class AudioNotFoundException : public AssetNotFoundException {
 public:
-    audioNotFoundException() = delete;
-    explicit audioNotFoundException(const char *audioName) : assetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
-    explicit audioNotFoundException(const std::string & audioName) : assetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
+    AudioNotFoundException() = delete;
+    explicit AudioNotFoundException(const char *audioName) : AssetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
+    explicit AudioNotFoundException(const std::string & audioName) : AssetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Audio with name ") + assetName + std::string(" not found during getter call.");
         return ret.c_str();
     }
 };
 
-class sceneAddFailureException : public fatalException {
+class SceneAddFailureException : public FatalException {
 public:
     enum Type {SPRITE, SOUND, SHAPE, GENERIC};
 private:
     Type type;
     std::string objectName;
 public:
-    sceneAddFailureException() = delete;
-    explicit sceneAddFailureException(std::string objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
-        : fatalException(error_code), type(type), objectName(std::move(objectName)) {}
-    explicit sceneAddFailureException(const char* objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
-        : fatalException(error_code), type(type), objectName(objectName) {}
+    SceneAddFailureException() = delete;
+    explicit SceneAddFailureException(std::string objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
+        : FatalException(error_code), type(type), objectName(std::move(objectName)) {}
+    explicit SceneAddFailureException(const char* objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
+        : FatalException(error_code), type(type), objectName(objectName) {}
 
     [[nodiscard]] const char* what() const noexcept override {
         static std::string exception_message;
@@ -128,18 +148,18 @@ public:
     }
 };
 
-class sceneObjectNotFoundException : public fatalException {
+class SceneObjectNotFoundException : public FatalException {
 public:
     enum Type {SPRITE, SOUND, SHAPE, GENERIC};
 private:
     Type type;
     std::string objectName;
 public:
-    sceneObjectNotFoundException() = delete;
-    explicit sceneObjectNotFoundException(std::string objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
-            : fatalException(error_code), type(type), objectName(std::move(objectName)) {}
-    explicit sceneObjectNotFoundException(const char* objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
-            : fatalException(error_code), type(type), objectName(objectName) {}
+    SceneObjectNotFoundException() = delete;
+    explicit SceneObjectNotFoundException(std::string objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
+            : FatalException(error_code), type(type), objectName(std::move(objectName)) {}
+    explicit SceneObjectNotFoundException(const char* objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
+            : FatalException(error_code), type(type), objectName(objectName) {}
 
     [[nodiscard]] const char* what() const noexcept override {
         static std::string exception_message;
@@ -161,11 +181,11 @@ public:
     }
 };
 
-class insufficientTilesException : public fatalException {
+class InsufficientTilesException : public FatalException {
     int tilesSuccess;
 public:
-    insufficientTilesException() = delete;
-    explicit insufficientTilesException(int tilesSuccess) : fatalException(INSUFFICIENT_TILES_ERROR_CODE), tilesSuccess(tilesSuccess) {}
+    InsufficientTilesException() = delete;
+    explicit InsufficientTilesException(int tilesSuccess) : FatalException(INSUFFICIENT_TILES_ERROR_CODE), tilesSuccess(tilesSuccess) {}
     [[nodiscard]] const char * what() const noexcept override {
         static std::string ret = std::string("Not enough tiles managed to be registered! Successfully registered ") + std::to_string(tilesSuccess) + std::string(" !");
         return ret.c_str();

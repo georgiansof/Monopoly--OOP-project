@@ -1,11 +1,11 @@
-#include "../headers/SceneManager.hpp"
-#include "../headers/DataStructures/CustomExceptions.hpp"
+#include "../../headers/Managers/SceneManager.hpp"
+#include "../../headers/DataStructures/CustomExceptions.hpp"
 
 using namespace std;
 using namespace sf;
 
-typedef sceneAddFailureException _safe;
-typedef sceneObjectNotFoundException _sonf;
+typedef SceneAddFailureException _safe;
+typedef SceneObjectNotFoundException _sonf;
 
 SceneManager::~SceneManager() {
     for(auto &sprite : sprites)
@@ -27,11 +27,10 @@ sf::Sprite & SceneManager::addSprite(const string& name, const Texture & texture
     if(insertionResult.second)
         return insertionResult.first->second;
     else
-        throw sceneAddFailureException(name, _safe::SPRITE);
+        throw SceneAddFailureException(name, _safe::SPRITE);
 }
 
 sf::Sprite & SceneManager::addSprite(const std::string & name, sf::Sprite * spritePtr) {
-
     auto pairPtr = new pair<string, Sprite>;
     pairPtr->first = name;
     pairPtr->second = *spritePtr;
@@ -39,21 +38,10 @@ sf::Sprite & SceneManager::addSprite(const std::string & name, sf::Sprite * spri
     if(insertionResult.second)
         return insertionResult.first->second;
     else
-        throw sceneAddFailureException(name, _safe::SPRITE);
+        throw SceneAddFailureException(name, _safe::SPRITE);
 }
 
-sf::Sprite & SceneManager::addSprite(const char* name, Sprite * const spritePtr) {
-    auto pairPtr = new pair<string, Sprite>;
-    pairPtr->first = string(name);
-    pairPtr->second = *spritePtr;
-    auto insertionResult =sprites.emplace(std::move(*pairPtr));
-    if(insertionResult.second)
-        return insertionResult.first->second;
-    else
-        throw sceneAddFailureException(name, _safe::SPRITE);
-}
-
-sf::Sound & SceneManager::addSound(const char* name, const SoundBuffer & audio) {
+sf::Sound & SceneManager::addSound(const string& name, const SoundBuffer & audio) {
     auto pairPtr = new pair<string, Sound>;
     pairPtr->first = string(name);
     pairPtr->second.setBuffer(audio);
@@ -61,10 +49,10 @@ sf::Sound & SceneManager::addSound(const char* name, const SoundBuffer & audio) 
     if(insertionResult.second)
         return insertionResult.first->second;
     else
-        throw sceneAddFailureException(name, _safe::SOUND);
+        throw SceneAddFailureException(name, _safe::SOUND);
 }
 
-sf::Sound & SceneManager::addSound(const char* name, Sound * const soundPtr) {
+sf::Sound & SceneManager::addSound(const string& name, Sound * const soundPtr) {
     auto pairPtr = new pair<string, Sound>;
     pairPtr->first = string(name);
     pairPtr->second = *soundPtr;
@@ -72,25 +60,23 @@ sf::Sound & SceneManager::addSound(const char* name, Sound * const soundPtr) {
     if(insertionResult.second)
         return insertionResult.first->second;
     else
-        throw sceneAddFailureException(name, _safe::SOUND);
+        throw SceneAddFailureException(name, _safe::SOUND);
 }
 
-Sprite & SceneManager::getSpriteReference(const char* name) {
-    string nameString(name);
-    auto foundPair = sprites.find(nameString);
+Sprite & SceneManager::getSpriteReference(const string& name) {
+    auto foundPair = sprites.find(name);
     if(foundPair != sprites.end())
         return foundPair->second;
     else
-        throw sceneObjectNotFoundException(name, _sonf::SPRITE);
+        throw SceneObjectNotFoundException(name, _sonf::SPRITE);
 }
 
-Sound & SceneManager::getSoundReference(const char* name) {
-    string nameString(name);
-    auto foundPair = sounds.find(nameString);
+Sound & SceneManager::getSoundReference(const string& name) {
+    auto foundPair = sounds.find(name);
     if(foundPair != sounds.end())
         return foundPair->second;
     else
-        throw sceneObjectNotFoundException(name, _sonf::SOUND);
+        throw SceneObjectNotFoundException(name, _sonf::SOUND);
 }
 
 ostream& operator<< (ostream & os, const SceneManager & sceneManager) noexcept {
@@ -114,22 +100,18 @@ ostream& operator<< (ostream & os, const SceneManager & sceneManager) noexcept {
     return os;
 }
 
-sf::Shape & SceneManager::addShape(const char* name, sf::Shape * shapePtr) {
-    return this->addShape(string(name), shapePtr);
-}
 sf::Shape & SceneManager::addShape(const std::string & name, sf::Shape * shapePtr) {
     auto insertionResult = shapePointers.emplace(name,shapePtr);
     if(insertionResult.second)
         return *insertionResult.first->second;
     else
-        throw sceneAddFailureException(name, _safe::SHAPE);
+        throw SceneAddFailureException(name, _safe::SHAPE);
 }
 
-sf::Shape & SceneManager::getShapeReference(const char* name) {
-    string nameString(name);
-    auto foundPair = shapePointers.find(nameString);
+sf::Shape & SceneManager::getShapeReference(const string& name) {
+    auto foundPair = shapePointers.find(name);
     if(foundPair != shapePointers.end())
         return *foundPair->second;
     else
-        throw sceneObjectNotFoundException(name, _sonf::SHAPE);
+        throw SceneObjectNotFoundException(name, _sonf::SHAPE);
 }
