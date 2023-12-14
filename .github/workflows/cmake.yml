@@ -124,6 +124,7 @@ jobs:
 
       # NOTE: also update in CMakeLists FetchContent
       SFML_VERSION: "2023-06-21-2.6.0"
+      SDL_VERSION: "2023-11-02-release-2.28.5"
 
       # NOTE: replace with another version if this one does not work
       # For more versions, see https://winlibs.com or

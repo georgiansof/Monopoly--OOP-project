@@ -38,7 +38,7 @@
 class Game {
 public:
     enum axis {X,Y};
-    enum host_type {UNDEFINED, CLIENT, SERVER};
+    enum host_type {UNDEFINED = 0, CLIENT = 1, SERVER = 2};
 private:
     Game();
     ~Game() = default;
@@ -57,6 +57,8 @@ private:
     CircularList<Player*>::iterator currentPlayerIterator;
 
     sf::Font *defaultFont = nullptr;
+    void connectToServer(std::string ip, int port);
+    void waitForClients(int startPort, int numberOfPlayers);
 public:
     ResourceManager* getResourceManagerPtr() noexcept;
     SceneManager* getSceneManagerPtr() noexcept;
@@ -96,6 +98,7 @@ public:
     static void mainMenuServerButtonAction();
     static void mainMenuClientButtonAction();
     static void mainMenuBackButtonAction();
+    static void mainMenuSubmitButtonAction();
 };
 
 #endif //OOP_GAME_H

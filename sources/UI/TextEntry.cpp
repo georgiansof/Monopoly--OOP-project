@@ -114,16 +114,19 @@ void TextEntry::onTextEntered(char chr) {
             if((int)text.size() < maxChr && !isEnter(chr) && isCharAllowed(chr, charTypeMask))
                 text.push_back(chr);
             else {
-                if(!isEnter(chr))
-                    cerr << "Character " << chr << " not allowed in textBox.\n";
-                else {
-                    cerr << "Enter pressed in textBox.\n";
-                }
+                if((int)text.size() == maxChr)
+                    cerr << "Maximum length of textbox reached.\n";
+                else
+                    if(!isEnter(chr))
+                        cerr << "Character " << chr << " not allowed in textBox.\n";
+                    else
+                        cerr << "Enter pressed in textBox.\n";
+
             }
         }
     }
 
-    textInside.setString(text);
+    this->textInside.setString(this->text);
 }
 
 uint32_t TextEntry::getFontSize() const {
@@ -135,3 +138,12 @@ void TextEntry::setCharType(uint8_t _charTypeMask) {
 }
 
 void TextEntry::setMaxLength(int len) {this->maxChr = len;}
+
+const std::string& TextEntry::getText() const {
+    return this->text;
+}
+
+void TextEntry::setText(std::string str) {
+    this->text = std::move(str);
+    this->textInside.setString(this->text);
+}

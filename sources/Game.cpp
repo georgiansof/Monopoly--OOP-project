@@ -3,6 +3,7 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include <random>
+#include <regex>
 #include "../headers/external/json.hpp"
 #include "../constants.hpp"
 #include "../headers/DataStructures/CustomExceptions.hpp"
@@ -13,25 +14,33 @@ using namespace std;
 
 void Game::promptConnectionDetails() {
     TextEntry *ipte = dynamic_cast<TextEntry*>
-            (uiManager.elements.find("mainmenu_ip_entry")->second);
+            (uiManager.elements.find("mainmenu_ipEntry")->second);
     Label *iplbl = dynamic_cast<Label*>
-            (uiManager.elements.find("mainmenu_ip_label")->second);
+            (uiManager.elements.find("mainmenu_ipLabel")->second);
     TextEntry *portte = dynamic_cast<TextEntry*>
-            (uiManager.elements.find("mainmenu_port_entry")->second);
+            (uiManager.elements.find("mainmenu_portEntry")->second);
     Label *portlbl = dynamic_cast<Label*>
-            (uiManager.elements.find("mainmenu_port_label")->second);
+            (uiManager.elements.find("mainmenu_portLabel")->second);
+
+    ipte->setText("");
+    portte->setText("");
     switch(hostType) {
         case SERVER:
-            iplbl->setText("Start port");
-            portlbl->setText("Number of players (min 2, max 8)");
+            iplbl->setText("Start port (min 49152, max 65535)");
             ipte->setMaxLength(5);
+            ipte->setCharType(TextEntry::chrType::NUMBERS);
+            portlbl->setText("Player count (min 2, max 8)");
             portte->setMaxLength(1);
+            portte->setCharType(TextEntry::chrType::NUMBERS);
             break;
         case CLIENT:
-            iplbl->setText("IP");
-            portlbl->setText("Port");
+            iplbl->setText("Server IP");
+            portlbl->setText("Communication Port");
             ipte->setMaxLength(15);
+            ipte->setCharType(
+                TextEntry::chrType::NUMBERS | TextEntry::chrType::DOT);
             portte->setMaxLength(5);
+            portte->setCharType(TextEntry::chrType::NUMBERS);
             break;
         default:
             throw SwitchCaseNotCovered();
@@ -41,13 +50,18 @@ void Game::promptConnectionDetails() {
     portlbl->unhide();
     portte->unhide();
 
-    Button *back_choose_host = dynamic_cast<Button*>
+    Button *backChooseHost = dynamic_cast<Button*>
             (uiManager.elements.find("mainmenu_back_choose")->second);
-    back_choose_host->unhide();
+
+    Button *submitConnection = dynamic_cast<Button*>
+            (uiManager.elements.find("mainmenu_submit_connection")->second);
+
+    backChooseHost->unhide();
+    submitConnection->unhide();
 }
 
 void Game::constructMainMenuUI() {
-    auto choose_server_button =
+    auto chooseServerButton =
             new Button("Server",
                        {0.2, 0.475},
                        {0.2, 0.05},
@@ -59,7 +73,7 @@ void Game::constructMainMenuUI() {
                        FONTSIZE_DEFAULT + 10,
                        &Game::mainMenuServerButtonAction);
 
-    auto choose_client_button =
+    auto chooseClientButton =
             new Button("Client",
                        {0.6, 0.475},
                        {0.2, 0.05},
@@ -71,7 +85,7 @@ void Game::constructMainMenuUI() {
                        FONTSIZE_DEFAULT + 10,
                        &Game::mainMenuClientButtonAction);
 
-    auto ip_entry = new TextEntry({0.2,0.3},
+    auto ipEntry = new TextEntry({0.2,0.3},
                  this->coordinateToPercentage(150.0f, Game::axis::X),
                  15,
                  TextEntry::NUMBERS,
@@ -82,21 +96,15 @@ void Game::constructMainMenuUI() {
                  sf::Color::Yellow,
                  sf::Text::Style::Regular,
                  resourceManager.getFont("arial"));
-    auto ip_label = new Label("IP",
-                              *ip_entry,
+    auto ipLabel = new Label("IP",
+                              *ipEntry,
                               sf::Color::Green,
                               10,
                               FONTSIZE_DEFAULT,
                               sf::Color(COLOR_PURPLE),
                               sf::Text::Style::Bold);
-
-    std::cout << ip_entry->getPosition().x << ' ' << ip_entry->getPosition().y
-            << "entry cu labelul\n"
-            << ip_label->getPosition().x << ' ' << ip_label->getPosition().y << '\n';
-
-    std::cout << ip_label->text.getGlobalBounds().getPosition().x << ' ' << ip_label->text.getGlobalBounds().getPosition().y;
-
-    auto port_entry = new TextEntry({0.2,0.5},
+    
+    auto portEntry = new TextEntry({0.2,0.5},
                                   this->coordinateToPercentage(150.0f, Game::axis::X),
                                   5,
                                   TextEntry::NUMBERS,
@@ -107,17 +115,17 @@ void Game::constructMainMenuUI() {
                                   sf::Color::Yellow,
                                   sf::Text::Style::Regular,
                                   resourceManager.getFont("arial"));
-    auto port_label = new Label("Port",
-                                *port_entry,
+    auto portLabel = new Label("Port",
+                                *portEntry,
                                 sf::Color::Blue,
                                 10,
                                 FONTSIZE_DEFAULT,
                                 sf::Color::Yellow,
                                 sf::Text::Style::Bold);
 
-    auto back_choose_host =
+    auto backChooseHost =
             new Button("Back",
-                       {0.6, 0.7},
+                       {0.6, 0.5},
                        {0.2, 0.05},
                        sf::Color::White,
                        sf::Color::Blue,
@@ -126,43 +134,166 @@ void Game::constructMainMenuUI() {
                        sf::Text::Style::Regular,
                        FONTSIZE_DEFAULT + 10,
                        &Game::mainMenuBackButtonAction);
+    auto submitConnectionDetails =
+            new Button("Submit",
+                       {0.6, 0.6},
+                       {0.2, 0.05},
+                       sf::Color::White,
+                       sf::Color::Blue,
+                       OUTLINE_THICKNESS_DEFAULT,
+                       sf::Color::Black,
+                       sf::Text::Style::Regular,
+                       FONTSIZE_DEFAULT + 10,
+                       &Game::mainMenuSubmitButtonAction);
 
-    uiManager.addElement("mainmenu_ip_entry",ip_entry);
-    uiManager.addElement("mainmenu_ip_label",ip_label);
-    uiManager.addElement("mainmenu_port_entry", port_entry);
-    uiManager.addElement("mainmenu_port_label", port_label);
-    uiManager.addElement("mainmenu_choose_client", choose_client_button);
-    uiManager.addElement("mainmenu_choose_server", choose_server_button);
-    uiManager.addElement("mainmenu_back_choose", back_choose_host);
+    auto errorMessage = new Label("DEBUGMSG",
+                                  {0.2, 0.9},
+                                  sf::Color::Red,
+                                  10,
+                                  FONTSIZE_DEFAULT,
+                                  sf::Color::White,
+                                  sf::Text::Style::Bold);
 
-    ip_entry->hide();
-    ip_label->hide();
-    port_entry->hide();
-    port_label->hide();
-    back_choose_host->hide();
+
+    uiManager.addElement("mainmenu_ipEntry",ipEntry);
+    uiManager.addElement("mainmenu_ipLabel",ipLabel);
+    uiManager.addElement("mainmenu_portEntry", portEntry);
+    uiManager.addElement("mainmenu_portLabel", portLabel);
+    uiManager.addElement("mainmenu_choose_client", chooseClientButton);
+    uiManager.addElement("mainmenu_choose_server", chooseServerButton);
+    
+    uiManager.addElement("mainmenu_back_choose", backChooseHost);
+    uiManager.addElement("mainmenu_submit_connection", submitConnectionDetails);
+    uiManager.addElement("mainmenu_error_message", errorMessage);
+
+    ipEntry->hide();
+    ipLabel->hide();
+    portEntry->hide();
+    portLabel->hide();
+    backChooseHost->hide();
+    submitConnectionDetails->hide();
+    errorMessage->hide();
 }
 
-void Game::mainMenuBackButtonAction() {
+void Game::mainMenuSubmitButtonAction() {
     TextEntry *ipte = dynamic_cast<TextEntry*>
-            (Game::getInstancePtr()->uiManager.elements
-            .find("mainmenu_ip_entry")->second);
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_ipEntry")->second);
     Label *iplbl = dynamic_cast<Label*>
-            (Game::getInstancePtr()->uiManager.elements
-            .find("mainmenu_ip_label")->second);
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_ipLabel")->second);
     TextEntry *portte = dynamic_cast<TextEntry*>
-            (Game::getInstancePtr()->uiManager.elements.find("mainmenu_port_entry")->second);
+    (Game::getInstancePtr()->uiManager.elements.find("mainmenu_portEntry")->second);
     Label *portlbl = dynamic_cast<Label*>
-            (Game::getInstancePtr()->uiManager.elements
-            .find("mainmenu_port_label")->second);
-    Button *back_choose_host = dynamic_cast<Button*>
-            (Game::getInstancePtr()->uiManager.elements
-            .find("mainmenu_back_choose")->second);
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_portLabel")->second);
+    Button *backChooseHost = dynamic_cast<Button*>
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_back_choose")->second);
+
+    Button *submitConnection = dynamic_cast<Button*>
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_submit_connection")->second);
+
+    Label *errorLbl = dynamic_cast<Label*>
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_error_message")->second);
+
+    if(ipte->getText().empty() || portte->getText().empty()) {
+        errorLbl->setText("All entries are mandatory.");
+        errorLbl->showForSeconds(ERROR_SHOWTIME);
+        return;
+    }
+
+    /// client
+    std::string ip;
+    int port;
+
+    /// server
+    int startPort;
+    int numberOfPlayers;
+
+    switch(Game::getInstancePtr()->hostType) {
+        case SERVER: {
+            startPort = std::stoi(ipte->getText());
+            numberOfPlayers = std::stoi(portte->getText());
+            if(startPort < DYNAMIC_PORT_RANGE_MIN || startPort > DYNAMIC_PORT_RANGE_MAX) {
+                errorLbl->setText("Incorrect port. Make sure port is range [49152 - 65535] (Dynamic/private port range).");
+                errorLbl->showForSeconds(ERROR_SHOWTIME);
+                return;
+            }
+            if(numberOfPlayers < 2 || numberOfPlayers > 8) {
+                errorLbl->setText("There can be at least two players and at most eight.");
+                errorLbl->showForSeconds(ERROR_SHOWTIME);
+                return;
+            }
+            break;
+        }
+        case CLIENT: {
+            ip = ipte->getText();
+            port = std::stoi(portte->getText());
+            std::regex patternIP(R"(^((((2[0-4][0-9])|(25[0-5])|(1[0-9]{1,2})|[0-9])\.){3}((2[0-4][0-9])|(25[0-5])|(1[0-9]{1,2})|[0-9]))$)");
+
+            if(!std::regex_match(ip, patternIP)) {
+                errorLbl->setText("IP given doesn't match ipv4 pattern");
+                errorLbl->showForSeconds(ERROR_SHOWTIME);
+                return;
+            }
+
+            if(port < DYNAMIC_PORT_RANGE_MIN || port > DYNAMIC_PORT_RANGE_MAX) {
+                errorLbl->setText("Incorrect port. Make sure port is range [49152 - 65535] (Dynamic/private port range).");
+                errorLbl->showForSeconds(ERROR_SHOWTIME);
+                return;
+            }
+            break;
+        }
+        default:
+            throw SwitchCaseNotCovered();
+    }
 
     ipte->hide();
     iplbl->hide();
     portte->hide();
     portlbl->hide();
-    back_choose_host->hide();
+    backChooseHost->hide();
+    submitConnection->hide();
+    errorLbl->hide();
+
+    if(Game::getInstancePtr()->hostType == CLIENT)
+        Game::getInstancePtr()->connectToServer(ip, port);
+    if(Game::getInstancePtr()->hostType == SERVER)
+        Game::getInstancePtr()->waitForClients(startPort, numberOfPlayers);
+}
+
+void Game::mainMenuBackButtonAction() {
+    TextEntry *ipte = dynamic_cast<TextEntry*>
+            (Game::getInstancePtr()->uiManager.elements
+            .find("mainmenu_ipEntry")->second);
+    Label *iplbl = dynamic_cast<Label*>
+            (Game::getInstancePtr()->uiManager.elements
+            .find("mainmenu_ipLabel")->second);
+    TextEntry *portte = dynamic_cast<TextEntry*>
+            (Game::getInstancePtr()->uiManager.elements.find("mainmenu_portEntry")->second);
+    Label *portlbl = dynamic_cast<Label*>
+            (Game::getInstancePtr()->uiManager.elements
+            .find("mainmenu_portLabel")->second);
+    Button *backChooseHost = dynamic_cast<Button*>
+            (Game::getInstancePtr()->uiManager.elements
+            .find("mainmenu_back_choose")->second);
+    Button *submitConnection = dynamic_cast<Button*>
+            (Game::getInstancePtr()->uiManager.elements
+            .find("mainmenu_submit_connection")->second);
+    Label *errorLbl = dynamic_cast<Label*>
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_error_message")->second);
+
+    ipte->hide();
+    iplbl->hide();
+    portte->hide();
+    portlbl->hide();
+    backChooseHost->hide();
+    submitConnection->hide();
+    errorLbl->hide();
 
     auto clientButton =
             Game::getInstancePtr()->uiManager.elements

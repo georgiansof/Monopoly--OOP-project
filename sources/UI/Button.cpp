@@ -64,7 +64,8 @@ void Button::draw(sf::RenderWindow *window) {
 }
 
 void Button::onClick(sf::Mouse::Button click) {
-    (*this->action)();
+    if(!this->invisible)
+        (*this->action)();
 }
 
 void Button::setText(const std::string& textstr) {

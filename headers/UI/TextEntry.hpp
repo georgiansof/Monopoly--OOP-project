@@ -51,6 +51,8 @@ public:
     uint32_t getFontSize() const;
     void setCharType(uint8_t _charTypeMask);
     void setMaxLength(int len);
+    void setText(std::string str);
+    const std::string& getText() const;
 
     static bool isCharAllowed(char c, charType ctm);
 };
