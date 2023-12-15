@@ -14,14 +14,16 @@ UIElement::UIElement(const sf::Color &color,
                      bool invisible,
                      float outlineThickness,
                      sf::Color outlineColor) {
+    this->size = size_proc;
+    this->position = positionTLC_proc;
     this->shapeType = shapeType::RECTANGULAR;
     this->invisible = invisible;
     Vector2<unsigned> screenSize = Game::getInstancePtr()->getWindowSize();
-    Vector2<float> position = {positionTLC_proc.x * (float)screenSize.x, positionTLC_proc.y * (float)screenSize.y};
-    Vector2<float> size = {size_proc.x * (float)screenSize.x, size_proc.y * (float)screenSize.y};
-    this->shape = new RectangleShape(size);
+    Vector2<float> _position = {positionTLC_proc.x * (float)screenSize.x, positionTLC_proc.y * (float)screenSize.y};
+    Vector2<float> _size = {size_proc.x * (float)screenSize.x, size_proc.y * (float)screenSize.y};
+    this->shape = new RectangleShape(_size);
 
-    this->shape->setPosition(position);
+    this->shape->setPosition(_position);
     this->shape->setFillColor(color);
     this->shape->setOutlineThickness(outlineThickness);
     this->shape->setOutlineColor(outlineColor);
@@ -30,16 +32,17 @@ UIElement::UIElement(const sf::Color &color,
 UIElement::UIElement(const sf::Texture &texture,
                      const sf::Vector2f& positionTLC_proc, const sf::Vector2f& size_proc,
                      bool invisible) {
-
+    this->size = size_proc;
+    this->position = positionTLC_proc;
     this->textured = true;
     this->shapeType = shapeType::RECTANGULAR;
     this->invisible = invisible;
     Vector2<unsigned> screenSize = Game::getInstancePtr()->getWindowSize();
-    Vector2<float> position = {positionTLC_proc.x * (float)screenSize.x, positionTLC_proc.y * (float)screenSize.y};
-    Vector2<float> size = {size_proc.x * (float)screenSize.x, size_proc.y * (float)screenSize.y};
-    this->shape = new RectangleShape(size);
+    Vector2<float> _position = {positionTLC_proc.x * (float)screenSize.x, positionTLC_proc.y * (float)screenSize.y};
+    Vector2<float> _size = {size_proc.x * (float)screenSize.x, size_proc.y * (float)screenSize.y};
+    this->shape = new RectangleShape(_size);
 
-    this->shape->setPosition(position);
+    this->shape->setPosition(_position);
     //this->shape->setTextureRect(sf::IntRect(sf::Vector2i(position),sf::Vector2i(size)));
     this->shape->setTexture(&texture);
     this->shape->setOutlineThickness(0);
@@ -52,8 +55,11 @@ UIElement::UIElement(const UIElement& other) {
             this->textured = other.textured;
             this->shapeType = other.shapeType;
             this->invisible = other.invisible;
-            this->shape = new RectangleShape(other.shape->getGlobalBounds().getSize());
-            this->shape->setPosition(other.shape->getPosition());
+            this->size = other.size;
+            this->position = other.position;
+            Vector2f sizePx = Game::getInstancePtr()->percentageToCoordinates(other.size);
+            this->shape = new RectangleShape(sizePx);
+            this->shape->setPosition(Game::getInstancePtr()->percentageToCoordinates(this->position));
             this->shape->setTexture(other.shape->getTexture());
             this->shape->setOutlineThickness(other.shape->getOutlineThickness());
             this->shape->setOutlineColor(other.shape->getOutlineColor());
@@ -80,9 +86,9 @@ bool UIElement::isInvisible() const noexcept {
 bool UIElement::contains(sf::Vector2f position) const { /// TOFIX window resizing
     Vector2f fposition = {(float)position.x, (float)position.y};
     Vector2f shapePosition =
-            Game::getInstancePtr()->coordinatesToPercentage(this->shape->getGlobalBounds().getPosition());
+            this->position;
     Vector2f shapeSize =
-            Game::getInstancePtr()->coordinatesToPercentage(this->shape->getGlobalBounds().getSize());
+            this->size;
 
 
     if(fposition.x < shapePosition.x
@@ -127,11 +133,11 @@ std::chrono::time_point<std::chrono::steady_clock> UIElement::getTimerStart() co
 void UIElement::setPosition(const sf::Vector2f &position) {
     auto coordPosition = Game::getInstancePtr()->percentageToCoordinates(position);
     this->shape->setPosition(coordPosition);
+    this->position = position;
 }
 
 sf::Vector2f UIElement::getPosition() const noexcept {
-    Vector2f coordposition = this->shape->getGlobalBounds().getPosition();
-    return Game::getInstancePtr()->coordinatesToPercentage(coordposition);
+    return this->position;
 }
 
 void UIElement::setSize(const sf::Vector2f &size) {

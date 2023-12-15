@@ -31,6 +31,9 @@ public:
     static void nullFunction() {}
 };
 
+#define DEFAULT_WINDOW_WIDTH 800
+#define DEFAULT_WINDOW_HEIGHT 700
+
 #define BOARD_TILES_NUMBER 40
 #define PLAYER_START_MONEY 1500
 

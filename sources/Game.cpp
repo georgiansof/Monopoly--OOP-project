@@ -540,9 +540,12 @@ void Game::eventKeyReleased(sf::Keyboard::Key keycode) {
 
 }
 
-void Game::eventWindowResized() {
+void Game::eventWindowResized(sf::Vector2u windowSizeOld) {
     std::cout << "New width: " << window.getSize().x << '\n'
               << "New height: " << window.getSize().y << '\n';
+    sf::Vector2u windowSizeNew = window.getSize();
+    sizeMultiplierSinceStartX *= (windowSizeNew.x / windowSizeOld.x);
+    sizeMultiplierSinceStartY *= (windowSizeNew.y / windowSizeOld.y);
 }
 
 void Game::eventMousePressed(sf::Mouse::Button click, sf::Vector2i position) {
@@ -594,7 +597,8 @@ void Game::initWindow() {
 #ifdef __linux__
     XInitThreads();
 #endif
-    window.create(sf::VideoMode({800, 700}), "MonOOPoly", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+    window.create(sf::VideoMode({DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT}), "MonOOPoly", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+    this->windowSize = {DEFAULT_WINDOW_WIDTH,DEFAULT_WINDOW_HEIGHT};
     window.setVerticalSyncEnabled(true);
     ///window.setFramerateLimit(60);
 }
@@ -608,7 +612,8 @@ void Game::loop() {
                         window.close();
                         break;
                     case sf::Event::Resized:
-                        eventWindowResized();
+                        eventWindowResized(windowSize);
+                        windowSize = window.getSize();
                         break;
                     case sf::Event::KeyPressed:
                             this->eventKeyPressed(e.key.code);

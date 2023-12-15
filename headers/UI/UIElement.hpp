@@ -16,6 +16,8 @@ public:
     enum side_t {LEFT,RIGHT,UP,DOWN};
 protected:
     sf::Shape *shape = nullptr;
+    sf::Vector2f position;
+    sf::Vector2f size;
     bool invisible;
     shapeType shapeType;
     std::chrono::time_point<std::chrono::steady_clock> timerStamp;

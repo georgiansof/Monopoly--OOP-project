@@ -1,16 +1,25 @@
 THREADFLOW
+--- There might be some untracked threads, but they are minimal and their
+--- flow is determined to not throw any errors
+--- considering the connection is not lossy.
+--- Lossy connections can lead to unexpected crashes and behavior
+--- if packets don't arrive in full.
 
 joined threads are joining back the line
 detached threads point to exit
 
+one/many means how many of child instances appear for a parent instance
+
 main (one) ----------------------------------------> EXIT
     |                                                 ^
     |                                                 ^
-    -   onclickdown (many) ---------------------------^
+    --- onclickdown (many) ---------------------------^
+    |       |                                         ^
+    |       |-- connect & waitStart (one) ------------^
+    |                                                 ^
     |                                                 ^
     -   onclickrelease (many) ------------------------^
 
 
 known problems:
-- window resize breaks contains() function
-   > possible solution: store given size at construction (percent from screensize)
+-

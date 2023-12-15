@@ -54,6 +54,9 @@ private:
     std::string details;
     std::string hostname;
     sf::RenderWindow window;
+    sf::Vector2u windowSize;
+    uint32_t sizeMultiplierSinceStartX = 1;
+    uint32_t sizeMultiplierSinceStartY = 1;
     host_type hostType = UNDEFINED;
 
     ResourceManager resourceManager;
@@ -89,7 +92,7 @@ public:
 
     void eventKeyPressed(sf::Keyboard::Key keycode);
     void eventKeyReleased(sf::Keyboard::Key keycode);
-    void eventWindowResized();
+    void eventWindowResized(sf::Vector2u windowSizeOld);
     void eventMousePressed(sf::Mouse::Button click, sf::Vector2i position);
     void eventTextEntered(char chr);
     void clientEventAllConnected(std::string playerDetails);
