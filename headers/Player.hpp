@@ -35,6 +35,9 @@ class Player : public PlayerEconomy, public PlayerPiece {
     std::string name;
     sf::Color color;
     uint16_t boardPosition;
+    bool inJail = false;
+    int timesRolledInJail = 0;
+    std::pair<uint16_t,bool> incrementPosition(int amount = 1) noexcept;
 public:
     Player(std::string name, sf::Color color, uint32_t money = PLAYER_START_MONEY,
            uint16_t boardPosition = 0, uint8_t indexInsideTile = 0,
@@ -67,9 +70,12 @@ public:
     [[nodiscard]] const std::string & getName() const noexcept;
     [[nodiscard]] uint16_t getBoardPosition() const noexcept;
     [[nodiscard]] uint8_t getIndexInsideTile() const noexcept;
+    [[nodiscard]] bool isInJail() const noexcept;
 
-
-    std::pair<uint16_t,bool> incrementPosition(int amount = 1) noexcept;
+    void sendToJail();
+    void moveSpaces(int amount);
+    void incrementTimesRolledInJail();
+    int getTimesRolledInJail() const noexcept;
 };
 
 #endif //OOP_PLAYER_HPP

@@ -63,3 +63,11 @@ void UIManager::temporarilyShow(const std::string &name, float seconds) {
 
     find->second->showForSeconds(seconds);
 }
+
+UIElement * UIManager::getElement(const std::string &name) {
+    auto result = elements.find(name);
+    if(result == elements.end())
+        return nullptr;
+    else
+        return result->second;
+}

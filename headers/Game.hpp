@@ -73,6 +73,8 @@ private:
     ConnectionToServer *connectionToServer = nullptr;
     std::thread *initConnectThread = nullptr;
 
+    int timesRolledDouble = 0;
+
     void connectToServer(std::string ip, int port, std::string hostname);
     void waitForClients(int startPort, int numberOfPlayers);
     static void AwaitHandshakeAsync(ConnectionToClient *context);
@@ -81,11 +83,14 @@ private:
     void clientListenToServer();
     void broadcastToClients(const std::string& msg, std::vector<std::string> except = std::vector<std::string>());
     void broadcastFromClient(const std::string& msg);
+
+    void makeMove(int dice1, int dice2);
 public:
     void broadcast(const std::string& msg);
 
     ResourceManager* getResourceManagerPtr() noexcept;
     SceneManager* getSceneManagerPtr() noexcept;
+    Board* getBoardPtr() noexcept;
     UIManager* getuiManagerPtr() noexcept;
     static Game * getInstancePtr();
     CircularList<Player*>::iterator& getCurrentPlayerIterator();

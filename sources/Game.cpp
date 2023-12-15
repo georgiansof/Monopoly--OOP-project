@@ -26,7 +26,6 @@ void Game::AwaitHandshakeAsync(ConnectionToClient *context) {
 }
 
 void Game::connectToServer(std::string ip, int port, std::string hostname) {
-    this->window.setTitle(std::string("MonOOPoly (role CLIENT)"));
     std::cout << ip << ' ' << port << '\n';
 
     connectionToServer = new ConnectionToServer(ip, port, hostname);
@@ -36,7 +35,6 @@ void Game::connectToServer(std::string ip, int port, std::string hostname) {
 }
 
 void Game::waitForClients(int startPort, int numberOfPlayers) {
-    this->window.setTitle(std::string("MonOOPoly (role SERVER)"));
     std::cout << "Server up\n\n";
     for(int i = 0; i < numberOfPlayers; ++i) {
         std::cout << "Port " << startPort + Connection::getConnectionCount() << " listening \n";
@@ -408,13 +406,16 @@ void Game::mainMenuSubmitButtonAction() {
 
     auto game = Game::getInstancePtr();
 
+    game->hostname = name;
+
     if(game->hostType == CLIENT) {
+        game->window.setTitle(std::string("MonOOPoly (role CLIENT) playing as ") + name);
         game->connectToServer(ip, port, name);
         clientWaitingLbl->setText("Waiting for everyone to connect.");
     }
 
     if(game->hostType == SERVER) {
-        game->hostname = name;
+        game->window.setTitle(std::string("MonOOPoly (role SERVER) playing as ") + name);
         game->waitForClients(startPort, numberOfPlayers - 1);
     }
 
@@ -522,41 +523,6 @@ void Game::eventKeyPressed(sf::Keyboard::Key keycode) {
     for(auto& uiObj : uiManager.elements)
         uiObj.second->onKeyPress(keycode);
 
-    /*if(keycode == Keyboard::Key::Enter) {
-        Player *currentPlayer = *currentPlayerIterator;
-        cout << currentPlayer->getName() << "'s turn: \n";
-        cout << "Position before: " << currentPlayer->getBoardPosition() << '\n';
-        pair<uint8_t,uint8_t> dices;
-        uint8_t timesRolledDouble = 0;
-        int totalMoved = 0;
-        do {
-            dices = Game::diceRoll();
-            if (dices.first == dices.second && timesRolledDouble == 2) {
-                timesRolledDouble = 3;
-                ///jail player
-            }
-            else {
-                if (dices.first == dices.second)
-                    ++timesRolledDouble;
-                board.getTile(currentPlayer->getBoardPosition()).removePlayer(currentPlayer->getIndexInsideTile());
-                auto updatedPosition = currentPlayer->incrementPosition(dices.first + dices.second);
-                totalMoved += (dices.first + dices.second);
-                auto newPositionInsideTile = board.getTile(updatedPosition.first).addPlayer(currentPlayer);
-                currentPlayer->indexInsideTile = newPositionInsideTile.second;
-                newPositionInsideTile.first.x *= (float)this->getWindowSize().x;
-                newPositionInsideTile.first.y *= (float)this->getWindowSize().y;
-                currentPlayer->boardPieceShapePtr->setPosition(newPositionInsideTile.first);
-
-                if(updatedPosition.second) /// went through start
-                    currentPlayer->money += MONEY_FROM_START;
-            }
-        }
-        while(dices.first == dices.second && timesRolledDouble < 3);
-        cout << "Total tiles moved: " << totalMoved << '\n';
-        cout << "Position after: " << currentPlayer->getBoardPosition() << '\n';
-        ++currentPlayerIterator;
-
-    }*/
 }
 
 void Game::eventTextEntered(char chr) {
@@ -1063,16 +1029,17 @@ bool Game::isNameTaken(const std::string &name) const {
     return false;
 }
 
+Board *Game::getBoardPtr() noexcept {
+    return &this->board;
+}
+
 const std::string &Game::getHostName() const noexcept {
     return this->hostname;
 }
 
 void Game::eventServerReceivedInput(const std::string& input, ConnectionToClient *fromWho) {
-    if(input == "request diceroll") {
-        pair <uint8_t,uint8_t> dices;
-        dices = this->diceRoll();
-        fromWho->Send(to_string(dices.first));
-        fromWho->Send(to_string(dices.second));
+    if(input.starts_with("rolled ")) {
+        eventClientReceivedInput(input); /// as client
         return;
     }
 
@@ -1085,12 +1052,68 @@ void Game::eventServerReceivedInput(const std::string& input, ConnectionToClient
         eventServerReceivedInput(message, fromWho);
         return;
     }
+
+    if(input == "throw_desync")
+        throw GameDesynchronizedException();
+
     /// ELSE
     std::cout << "Unhandled input event from " << fromWho->getPeerName() << " with request *" << input << "*\n";
 }
 
+void Game::makeMove(int dice1, int dice2) {
+    Player *currentPlayer = *currentPlayerIterator;
+    if(timesRolledDouble == 2 && dice1 == dice2) {
+        currentPlayer->sendToJail();
+        timesRolledDouble = 0;
+        ++currentPlayerIterator;
+        Label *lbl = dynamic_cast<Label*> (this->uiManager.getElement("whosTurnLabel"));
+        lbl->setText((*currentPlayerIterator)->getName() + "'s turn.");
+        return;
+    }
+    currentPlayer->moveSpaces(dice1+dice2);
+    if(dice1 == dice2)
+        ++timesRolledDouble;
+    else {
+        timesRolledDouble = 0;
+        ++currentPlayerIterator;
+        Label *lbl = dynamic_cast<Label*> (this->uiManager.getElement("whosTurnLabel"));
+        lbl->setText((*currentPlayerIterator)->getName() + "'s turn.");
+    }
+}
+
 void Game::eventClientReceivedInput(const std::string &input) {
-    std::cout << "Unhandled input event from server with request *" << input << "*\n";
+    if(input.starts_with("rolled")) {
+        int namePos = input.find(' ') + 1;//input.find_first_of(' ') + 1;
+        int dice1Pos = input.find(' ', namePos) + 1;//(input.substr(namePos)).find_first_of(' ') + 1;
+        int dice2Pos = input.find(' ', dice1Pos) + 1;//(input.substr(dice1Pos)).find_first_of(' ') + 1;
+
+        std::string whoRolled = input.substr(namePos, (dice1Pos - 2) - namePos + 1);
+
+        int dice1 = stoi(input.substr(dice1Pos, 1));
+        int dice2 = stoi(input.substr(dice2Pos, 1));
+
+        if((*currentPlayerIterator)->getName() != whoRolled) {
+            broadcast("throw_desync");
+            throw GameDesynchronizedException();
+        }
+
+        Player *currentPlayer = *currentPlayerIterator;
+        if(currentPlayer->isInJail())
+            if (dice1 != dice2) {
+                currentPlayer->incrementTimesRolledInJail();
+                if(currentPlayer->getTimesRolledInJail() != 3)
+                    return;
+                else
+                    currentPlayer->money -= JAIL_FEE;
+                    /// and continue making the move
+            }
+        this->makeMove(dice1,dice2);
+        return;
+    }
+    if(input == "throw_desync")
+        throw GameDesynchronizedException();
+
+    std::cout << "Unhandled input event from server or self with request *" << input << "*\n";
 }
 
 void Game::broadcastToClients(const std::string& msg, std::vector<std::string> except) {

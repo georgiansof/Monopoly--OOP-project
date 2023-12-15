@@ -1,4 +1,5 @@
 #include "../headers/Player.hpp"
+#include "../headers/Game.hpp"
 
 using namespace std;
 using namespace sf;
@@ -91,4 +92,52 @@ Player& Player::operator=(Player&& other) noexcept {
 Player::~Player() {
     delete this->boardPieceShapePtr;
     this->boardPieceShapePtr = nullptr;
+}
+
+void Player::moveSpaces(int amount) {
+    Game *game = Game::getInstancePtr();
+    Board *board = game->getBoardPtr();
+    if(!this->inJail)
+        board->getTile(this->getBoardPosition()).removePlayer(this->getIndexInsideTile());
+    else
+        dynamic_cast<Jail&> (board->getTile(this->getBoardPosition())).removePlayerFromJail(this);
+    auto updatedPosition = this->incrementPosition(amount);
+    auto newPositionInsideTile = board->getTile(updatedPosition.first).addPlayer(this);
+    this->indexInsideTile = newPositionInsideTile.second;
+    newPositionInsideTile.first.x *= (float) game->getWindowSize().x;
+    newPositionInsideTile.first.y *= (float) game->getWindowSize().y;
+    this->boardPieceShapePtr->setPosition(newPositionInsideTile.first);
+    if(updatedPosition.second) /// went through start
+        this->money += MONEY_FROM_START;
+}
+
+void Player::sendToJail() {
+    Game *game = Game::getInstancePtr();
+    Board *board = game->getBoardPtr();
+    if(inJail) {
+        timesRolledInJail = 0;
+        return;
+    }
+    inJail = true;
+    timesRolledInJail = 0;
+
+    board->getTile(this->getBoardPosition()).removePlayer(this);
+    auto newPositionInsideTile = dynamic_cast<Jail&> (
+            board->getTile(JAIL_TILE_POSITION))
+                    .addPlayerToJail(this);
+    newPositionInsideTile.first.x *= (float)game->getWindowSize().x;
+    newPositionInsideTile.first.y *= (float)game->getWindowSize().y;
+    this->boardPieceShapePtr->setPosition(newPositionInsideTile.first);
+}
+
+void Player::incrementTimesRolledInJail() {
+    ++timesRolledInJail;
+}
+
+int Player::getTimesRolledInJail() const noexcept {
+    return timesRolledInJail;
+}
+
+bool Player::isInJail() const noexcept {
+    return this->inJail;
 }

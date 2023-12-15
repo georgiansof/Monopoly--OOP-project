@@ -36,6 +36,7 @@ public:
     void unhideElement(const std::string& name);
     void temporarilyShow(const std::string& name, float seconds);
     void temporarilyShow(UIElement *elem, float seconds);
+    UIElement* getElement(const std::string & name);
 };
 
 #endif //OOP_UIMANAGER_HPP

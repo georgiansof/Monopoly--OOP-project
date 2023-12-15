@@ -34,6 +34,14 @@ public:
     [[nodiscard]] int getExitCode() const noexcept {return exit_code;}
 };
 
+class GameDesynchronizedException : public FatalException {
+public:
+    explicit GameDesynchronizedException(int exit_code = GAME_DESYNC_ERROR_CODE) : FatalException(exit_code) {}
+    [[nodiscard]] const char* what() const noexcept override {
+        return "Game has been desynchronized!\n";
+    }
+};
+
 class NameTakenException : public FatalException {
 public:
     explicit NameTakenException(int exit_code = NAME_TAKEN_ERROR_CODE) : FatalException(exit_code) {}

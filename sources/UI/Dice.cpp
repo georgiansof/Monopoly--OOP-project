@@ -32,34 +32,14 @@ void Dice::onClick(sf::Mouse::Button click) {
     Player *currentPlayer =
             *game->getCurrentPlayerIterator();
 
-    pair<uint8_t, uint8_t> dices;
-    dices = game->diceRoll();
-    game->broadcast(to_string(dices.first));
-
     if(currentPlayer->getName() == game->getHostName()) {
-        /*if(game->getHostType() == Game::SERVER) {
-            dices = Game::diceRoll();
-        }
-        else {
-            game->getConnectionToServer()->Send("request diceroll");
-            dices.first = stoi(game->getConnectionToServer()->Receive());
-            dices.second = stoi(game->getConnectionToServer()->Receive());
-        }*///partially incorrect
+        pair<uint8_t, uint8_t> dices;
+        dices = game->diceRoll();
+        std::string broadcastMsg = string("rolled ") + game->getHostName() + " " + to_string(dices.first) + " " + to_string(dices.second);
+        game->broadcast(broadcastMsg);
+        game->eventClientReceivedInput(broadcastMsg); /// also for server
     }
+    else
+        cerr << "It's not your turn! It's " + currentPlayer->getName() <<"'s turn and you are " << game->getHostName() <<'\n';
 
-
-
-    /*if(game->getHostType() == Game::CLIENT) {
-        dices.first = stoi(game->getConnectionToServer()->Receive(NO_TIMEOUT));
-        dices.second = stoi(game->getConnectionToServer()->Receive(NO_TIMEOUT));
-    }
-    else { /// SERVER
-        dices = Game::diceRoll();
-        for(auto connection : game->getConnectionsToClients()) {
-            connection->Send(to_string(dices.first));
-            connection->Send(to_string(dices.second));
-        }
-    }*/
-
-    //std::cout << dices.first << ' ' << dices.second << '\n';
 }

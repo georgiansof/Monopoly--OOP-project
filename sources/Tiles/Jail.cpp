@@ -13,4 +13,24 @@ Jail::Jail() : BoardTile(10, BoardTile::JAIL) {
                     borderSize + jailTilePlayerPositionsInsideOffsets[x_ind],
                     1.0f - borderSize - jailTilePlayerPositionsInsideOffsets[y_ind]
                     );
+    for(int i = 0; i < 9; ++i)
+        occupiedPositionsImprisoned[i] = nullptr;
+}
+std::pair<sf::Vector2f, uint8_t> Jail::addPlayerToJail(Player *playerPtr) {
+    for(int i = 0 ; i < 9; ++i)
+        if(!occupiedPositionsImprisoned[i]) {
+            occupiedPositionsImprisoned[i] = playerPtr;
+            return {playerPositionsImprisoned[i], i};
+        }
+    throw std::runtime_error("Under Jail::addPlayer, player position inside tile overflow!");
+}
+
+void Jail::removePlayerFromJail(uint8_t positionInsideTileJailed) {
+    occupiedPositionsImprisoned[positionInsideTileJailed] = nullptr;
+}
+
+void Jail::removePlayerFromJail(Player *playerPtr) {
+    for(auto& p : this->occupiedPositions)
+        if(p == playerPtr)
+            p = nullptr;
 }
