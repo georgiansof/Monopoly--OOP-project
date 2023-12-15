@@ -2,12 +2,16 @@
 #define OOP_GAME_H
 
 #include <iostream>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "external/SDL2/SDL.h"
+#include "external/SDL2/SDL_net.h"
 
 #ifdef __linux__
 #include <X11/Xlib.h>
 #endif
+
 #include <chrono>
 #include <thread>
 #include <vector>
@@ -35,16 +39,19 @@
 #include "DataStructures/CircularList.hpp"
 #include "DataStructures/CustomExceptions.hpp"
 
+#include "Networking/Connection.hpp"
+
 class Game {
 public:
     enum axis {X,Y};
     enum host_type {UNDEFINED = 0, CLIENT = 1, SERVER = 2};
 private:
     Game();
-    ~Game() = default;
+    ~Game();
     static Game* instance;
 
     std::string details;
+    std::string hostname;
     sf::RenderWindow window;
     host_type hostType = UNDEFINED;
 
@@ -57,13 +64,20 @@ private:
     CircularList<Player*>::iterator currentPlayerIterator;
 
     sf::Font *defaultFont = nullptr;
-    void connectToServer(std::string ip, int port);
+
+    std::vector<ConnectionToClient*> connectionsToClients;
+    std::thread *initConnectThread = nullptr;
+
+
+    void connectToServer(std::string ip, int port, std::string hostname);
     void waitForClients(int startPort, int numberOfPlayers);
+    static void AwaitHandshakeAsync(ConnectionToClient *context);
 public:
     ResourceManager* getResourceManagerPtr() noexcept;
     SceneManager* getSceneManagerPtr() noexcept;
     UIManager* getuiManagerPtr() noexcept;
     static Game * getInstancePtr();
+
     sf::Vector2<unsigned int> getWindowSize() const;
     const sf::Font& getDefaultFont() const;
     static void clearInstance();

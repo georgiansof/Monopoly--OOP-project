@@ -103,7 +103,9 @@ void UIElement::onClickOutside(sf::Mouse::Button button) {}
 void UIElement::onTextEntered(char chr) {}
 
 void UIElement::hide() {this->invisible = true; this->timerOn = false;}
-void UIElement::unhide() {this->invisible = false;}
+void UIElement::unhide() {
+    this->invisible = false;
+}
 
 bool UIElement::isEnter(char chr) noexcept {
     return chr == '\r' || chr == '\n';

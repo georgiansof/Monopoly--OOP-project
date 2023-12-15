@@ -22,7 +22,6 @@ std::string Connection::Receive(float timeout, int MAXLEN) {
         if(bytesReturned > 0)
             return std::string(buffer);
         timer = std::chrono::steady_clock::now() - start;
-        std::cout<<timer.count() - timeout;
         if(timer.count() > timeout)
             return "timeout";
     }
@@ -62,7 +61,7 @@ ConnectionToClient::ConnectionToClient(int port) {
     this->port = port;
     ++count;
     IPaddress ip;
-    SDLNet_ResolveHost(&ip, NULL, port);
+    SDLNet_ResolveHost(&ip, nullptr, port);
     local = SDLNet_TCP_Open(&ip);
     connectThread = new std::thread(AwaitClientWrapper, this);
     auto result = threads.insert(std::make_pair(port, connectThread));
@@ -97,4 +96,8 @@ Connection::~Connection() {
 
 int Connection::getPort() const {
     return this->port;
+}
+
+std::string Connection::getPeerName() const {
+    return remote_name;
 }

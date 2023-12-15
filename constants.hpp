@@ -71,6 +71,7 @@ public:
 #define FONTSIZE_DEFAULT 15
 
 #define COLOR_PURPLE 75, 0, 110
+#define COLOR_ORANGE 255, 165, 0
 
 #define BACKSPACE_ASCII 8
 

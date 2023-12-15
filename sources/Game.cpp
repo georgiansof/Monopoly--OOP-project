@@ -12,7 +12,67 @@ using json = nlohmann::json;
 using namespace sf;
 using namespace std;
 
+void Game::AwaitHandshakeAsync(ConnectionToClient *context) {
+    context->AwaitHandshake();
+    std::cout<< "Port " << context->getPort()<< " connected to " << context->getPeerName() << '\n';
+}
+
+void Game::connectToServer(std::string ip, int port, std::string hostname) {
+    this->window.setTitle(std::string("MonOOPoly (role CLIENT)"));
+    std::cout << ip << ' ' << port << '\n';
+
+    auto srv = new ConnectionToServer(ip, port, hostname);
+    std::cout << srv->Receive();
+
+    //srv->Send("Client closing connection\n");
+
+    //delete srv;
+}
+
+void Game::waitForClients(int startPort, int numberOfPlayers) {
+    this->window.setTitle(std::string("MonOOPoly (role SERVER)"));
+    std::cout << "Server up\n\n";
+    for(int i = 0; i < numberOfPlayers; ++i) {
+        std::cout << "Port " << startPort + Connection::getConnectionCount() << " listening \n";
+        connectionsToClients.push_back(new ConnectionToClient(startPort + Connection::getConnectionCount()));
+    }
+
+    std::cout<<'\n';
+
+
+
+    std::vector<std::thread*> threads;
+    for(int i = 0; i < numberOfPlayers; ++i)
+        threads.push_back(new std::thread(Game::AwaitHandshakeAsync, connectionsToClients[i]));
+
+    for(int i = 0; i < threads.size(); ++i) {
+        threads[i]->join();
+        delete threads[i];
+    }
+    threads.clear();
+    std::cout<<'\n';
+
+    for(int i = 0; i < numberOfPlayers; ++i) {
+        connectionsToClients[i]->Send("test\n");
+        std::cout << "Message sent to " << connectionsToClients[i]->getPeerAddress() << ':' << connectionsToClients[i]->getPort() << '\n';
+    }
+    std::cout<<'\n';
+
+
+    /*for(int i = 0; i < numberOfPlayers; ++i)
+        std::cout << connectionsToClients[i]->Receive();
+
+    std::cout << "Server shutting down\n\n";
+    for(auto &conn : connectionsToClients)
+        delete conn;
+    connectionsToClients.clear();*/
+}
+
 void Game::promptConnectionDetails() {
+    TextEntry *namete = dynamic_cast<TextEntry*>
+    (uiManager.elements.find("mainmenu_nameEntry")->second);
+    Label *namelbl = dynamic_cast<Label*>
+    (uiManager.elements.find("mainmenu_nameLabel")->second);
     TextEntry *ipte = dynamic_cast<TextEntry*>
             (uiManager.elements.find("mainmenu_ipEntry")->second);
     Label *iplbl = dynamic_cast<Label*>
@@ -45,10 +105,13 @@ void Game::promptConnectionDetails() {
         default:
             throw SwitchCaseNotCovered();
     }
+
     iplbl->unhide();
     ipte->unhide();
     portlbl->unhide();
     portte->unhide();
+    namete->unhide();
+    namelbl->unhide();
 
     Button *backChooseHost = dynamic_cast<Button*>
             (uiManager.elements.find("mainmenu_back_choose")->second);
@@ -61,6 +124,24 @@ void Game::promptConnectionDetails() {
 }
 
 void Game::constructMainMenuUI() {
+    auto nameEntry = new TextEntry({0.2,0.15},
+                                 this->coordinateToPercentage(150.0f, Game::axis::X),
+                                 15,
+                                 TextEntry::chrType::LETTERS,
+                                 sf::Color::Blue,
+                                 3.0f,
+                                 sf::Color::Red,
+                                 FONTSIZE_DEFAULT,
+                                 sf::Color::Yellow,
+                                 sf::Text::Style::Regular,
+                                 resourceManager.getFont("arial"));
+    auto nameLabel = new Label("Name (Unique!)",
+                             *nameEntry,
+                             sf::Color(COLOR_ORANGE),
+                             10,
+                             FONTSIZE_DEFAULT,
+                             sf::Color(sf::Color::White),
+                             sf::Text::Style::Bold);
     auto chooseServerButton =
             new Button("Server",
                        {0.2, 0.475},
@@ -165,7 +246,11 @@ void Game::constructMainMenuUI() {
     uiManager.addElement("mainmenu_back_choose", backChooseHost);
     uiManager.addElement("mainmenu_submit_connection", submitConnectionDetails);
     uiManager.addElement("mainmenu_error_message", errorMessage);
+    uiManager.addElement("mainmenu_nameEntry", nameEntry);
+    uiManager.addElement("mainmenu_nameLabel", nameLabel);
 
+    nameEntry->hide();
+    nameLabel->hide();
     ipEntry->hide();
     ipLabel->hide();
     portEntry->hide();
@@ -176,6 +261,11 @@ void Game::constructMainMenuUI() {
 }
 
 void Game::mainMenuSubmitButtonAction() {
+    TextEntry *namete = dynamic_cast<TextEntry*>
+    (Game::getInstancePtr()->uiManager.elements.find("mainmenu_nameEntry")->second);
+    Label *namelbl = dynamic_cast<Label*>
+    (Game::getInstancePtr()->uiManager.elements.find("mainmenu_nameLabel")->second);
+
     TextEntry *ipte = dynamic_cast<TextEntry*>
     (Game::getInstancePtr()->uiManager.elements
                     .find("mainmenu_ipEntry")->second);
@@ -199,11 +289,13 @@ void Game::mainMenuSubmitButtonAction() {
     (Game::getInstancePtr()->uiManager.elements
                     .find("mainmenu_error_message")->second);
 
-    if(ipte->getText().empty() || portte->getText().empty()) {
+    if(ipte->getText().empty() || portte->getText().empty() || namete->getText().empty()) {
         errorLbl->setText("All entries are mandatory.");
         errorLbl->showForSeconds(ERROR_SHOWTIME);
         return;
     }
+
+    std::string name = namete->getText();
 
     /// client
     std::string ip;
@@ -212,6 +304,7 @@ void Game::mainMenuSubmitButtonAction() {
     /// server
     int startPort;
     int numberOfPlayers;
+
 
     switch(Game::getInstancePtr()->hostType) {
         case SERVER: {
@@ -251,6 +344,8 @@ void Game::mainMenuSubmitButtonAction() {
             throw SwitchCaseNotCovered();
     }
 
+    namete->hide();
+    namelbl->hide();
     ipte->hide();
     iplbl->hide();
     portte->hide();
@@ -259,13 +354,22 @@ void Game::mainMenuSubmitButtonAction() {
     submitConnection->hide();
     errorLbl->hide();
 
-    if(Game::getInstancePtr()->hostType == CLIENT)
-        Game::getInstancePtr()->connectToServer(ip, port);
-    if(Game::getInstancePtr()->hostType == SERVER)
-        Game::getInstancePtr()->waitForClients(startPort, numberOfPlayers);
+    auto game = Game::getInstancePtr();
+
+    if(game->hostType == CLIENT)
+        game->connectToServer(ip, port, name);
+
+    if(game->hostType == SERVER) {
+        game->hostname = name;
+        game->waitForClients(startPort, numberOfPlayers - 1);
+    }
 }
 
 void Game::mainMenuBackButtonAction() {
+    TextEntry *namete = dynamic_cast<TextEntry*>
+            (Game::getInstancePtr()->uiManager.elements.find("mainmenu_nameEntry")->second);
+    Label *namelbl = dynamic_cast<Label*>
+            (Game::getInstancePtr()->uiManager.elements.find("mainmenu_nameLabel")->second);
     TextEntry *ipte = dynamic_cast<TextEntry*>
             (Game::getInstancePtr()->uiManager.elements
             .find("mainmenu_ipEntry")->second);
@@ -287,6 +391,8 @@ void Game::mainMenuBackButtonAction() {
     (Game::getInstancePtr()->uiManager.elements
                     .find("mainmenu_error_message")->second);
 
+    namete->hide();
+    namelbl->hide();
     ipte->hide();
     iplbl->hide();
     portte->hide();
@@ -397,12 +503,20 @@ void Game::eventWindowResized() {
 }
 
 void Game::eventMousePressed(sf::Mouse::Button click, sf::Vector2i position) {
+    bool objectOnTopPressed = false;
     if(click == sf::Mouse::Button::Left)
         for(auto &uiElem : uiManager.elements) {
-            if (uiElem.second->contains(this->coordinatesToPercentage(Vector2f(position)))) {
-                uiElem.second->onClick(click);
+            if (!uiElem.second->isInvisible() && uiElem.second->contains(this->coordinatesToPercentage(Vector2f(position)))) {
+                if(!objectOnTopPressed) {
+                   (new thread([uiElem, click]() {
+                        uiElem.second->onClick(click);
+                    }))->detach();
+                    objectOnTopPressed = true;
+                }
             } else {
-                uiElem.second->onClickOutside(click);
+               (new thread([uiElem,click] () {
+                    uiElem.second->onClickOutside(click);
+                }))->detach();
             }
         }
 }
@@ -441,42 +555,41 @@ void Game::initWindow() {
     window.setVerticalSyncEnabled(true);
     ///window.setFramerateLimit(60);
 }
-void Game::loop() {
-    while(window.isOpen()) {
-        sf::Event e{};
-        while(window.pollEvent(e)) {
-            switch(e.type) {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-                case sf::Event::Resized:
-                    this->eventWindowResized();
-                    break;
-                case sf::Event::KeyPressed:
-                    this->eventKeyPressed(e.key.code);
-                    break;
-                case sf::Event::KeyReleased:
-                    this->eventKeyReleased(e.key.code);
-                    break;
-                case sf::Event::MouseButtonPressed:
-                    this->eventMousePressed(e.mouseButton.button, sf::Mouse::getPosition(window));
-                    break;
-                case sf::Event::TextEntered:
-                    if(e.text.unicode < 128) {
-                        this->eventTextEntered(static_cast<char>(e.text.unicode));
-                    }
-                default:
-                    break;
-            }
-        }
-        //using namespace std::chrono_literals;
-        //std::this_thread::sleep_for(1000ms);
 
-        window.clear();
-        this->verifyTemporarilyVisibleUI();
-        this->draw();
-        window.display();
-    }
+void Game::loop() {
+        while(window.isOpen()) {
+            sf::Event e{};
+            while (window.pollEvent(e)) {
+                switch (e.type) {
+                    case sf::Event::Closed:
+                        window.close();
+                        break;
+                    case sf::Event::Resized:
+                        eventWindowResized();
+                        break;
+                    case sf::Event::KeyPressed:
+                            this->eventKeyPressed(e.key.code);
+                        break;
+                    case sf::Event::KeyReleased:
+                            this->eventKeyReleased(e.key.code);
+                        break;
+                    case sf::Event::MouseButtonPressed:
+                            this->eventMousePressed(e.mouseButton.button, sf::Mouse::getPosition(this->window));
+                        break;
+                    case sf::Event::TextEntered:
+                            this->eventTextEntered(static_cast<char>(e.text.unicode));
+                    default:
+                        break;
+                }
+            }
+            //using namespace std::chrono_literals;
+            //std::this_thread::sleep_for(1000ms);
+
+            window.clear();
+            this->verifyTemporarilyVisibleUI();
+            this->draw();
+            window.display();
+        }
 }
 
 void Game::verifyTemporarilyVisibleUI() {
@@ -754,4 +867,8 @@ float Game::percentageToCoordinate(float perc, Game::axis which) const {
         return perc * (float)this->getWindowSize().x;
     else
         return perc * (float)this->getWindowSize().y;
+}
+
+Game::~Game() {
+    delete initConnectThread;
 }

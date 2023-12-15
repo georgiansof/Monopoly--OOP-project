@@ -1,5 +1,5 @@
 /**-- MonOOPoly by georgiansof@2023 --***/
-
+#define SDL_MAIN_HANDLED
 /// global includes
 #include <iostream>
 
@@ -30,9 +30,10 @@ int handleFatalException(exception &e) {
 }
 
 
-
-
 int main() {
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDLNet_Init();
+
     Game *game = Game::getInstancePtr();
     ResourceManager *resourceManager = game->getResourceManagerPtr(); /// loads from files
     SceneManager *sceneManager = game->getSceneManagerPtr(); /// stored objects are drawn
@@ -107,5 +108,8 @@ int main() {
     */
     game->loop();
     Game::clearInstance();
+
+    SDLNet_Quit();
+    SDL_Quit();
     return 0;
 }

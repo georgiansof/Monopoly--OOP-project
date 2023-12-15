@@ -25,6 +25,7 @@ public:
     void Send(std::string text);
     static int getConnectionCount();
     int getPort() const;
+    std::string getPeerName() const;
 };
 
 class ConnectionToServer : public Connection {

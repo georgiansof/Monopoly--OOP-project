@@ -1,0 +1,11 @@
+THREADFLOW
+
+joined threads are joining back the line
+detached threads point to exit
+
+main (one) ----------------------------------------> EXIT
+    |                                                 ^
+    |                                                 ^
+    -   onclickdown (many) ---------------------------^
+    |                                                 ^
+    -   onclickrelease (many) ------------------------^
