@@ -27,7 +27,6 @@ int main() {
 
     Game *game = Game::getInstancePtr();
     ResourceManager *resourceManager = game->getResourceManagerPtr(); /// loads from files
-    SceneManager *sceneManager = game->getSceneManagerPtr(); /// stored objects are drawn
     UIManager *uiManager = game->getuiManagerPtr();
 
     game->initWindow();
@@ -44,45 +43,8 @@ int main() {
     uiManager->hideDices();
     game->constructMainMenuUI();
 
-    ///--------------------------------
-    /*
-    try {
-        Sprite &board = sceneManager->addSprite("board", resourceManager->getTexture("board"));
-        sceneManager->addSound("coin flip", resourceManager->getAudio("coin flip"));
-        /// scale board to screen
-        board.setScale((float) game->getWindowSize().x / board.getLocalBounds().width,
-                       (float) game->getWindowSize().y / board.getLocalBounds().height);
-    }
-    catch(exception &e) {
-        return handleFatalException(e);
-    }
+    /// main menu flow -> manages connections -> finishes -> is destroyed -> board is drawn -> game starts
 
-    /// ADD TILES
-
-    try {game->addTiles();}
-    catch (exception &e) {
-        return handleFatalException(e);
-    }
-    ///  ADD PLAYERS
-    try {
-        game->addPlayer(new Player("Gigi", Color(0, 0, 0), PLAYER_START_MONEY));
-        game->addPlayer(new Player("Giani", Color::Yellow));
-        game->addPlayer(new Player("Geo", Color::Green));
-        game->addPlayer(new Player("Gabi", Color::Red));
-        game->addPlayer(new Player("Geralt", Color::Magenta));
-        game->addPlayer(new Player("George", Color::Blue));
-        game->addPlayer(new Player("Georgian", Color::Cyan));
-        game->addPlayer(new Player("Georgiana", Color::White));
-
-        game->addPlayer(new Player("Bog", Color::Transparent));
-    }
-    catch(std::exception &e) {
-        if(dynamic_cast<FatalException*>(&e) == nullptr)
-            std::cerr << e.what();
-        else
-            handleFatalException(e);
-    }
-    */
     game->loop();
     Game::clearInstance();
 

@@ -29,7 +29,7 @@ void Game::connectToServer(std::string ip, int port, std::string hostname) {
     this->window.setTitle(std::string("MonOOPoly (role CLIENT)"));
     std::cout << ip << ' ' << port << '\n';
 
-    auto srv = new ConnectionToServer(ip, port, hostname);
+    connectionToServer = new ConnectionToServer(ip, port, hostname);
     //srv->Send("Client closing connection\n");
 
     //delete srv;
@@ -70,6 +70,10 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
     std::cout<<"All players connected.\n";
     this->destroyMainMenuUI();
     this->showBoard(playerDetails);
+    for(auto connection : connectionsToClients)
+        (new thread([this, connection]() {
+            this->serverListenToClient(connection);
+        }))->detach();
 
     /*for(int i = 0; i < numberOfPlayers; ++i)
         std::cout << connectionsToClients[i]->Receive();
@@ -78,6 +82,14 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
     for(auto &conn : connectionsToClients)
         delete conn;
     connectionsToClients.clear();*/
+}
+
+void Game::serverListenToClient(ConnectionToClient *connection) {
+    std::string recv = connection->Receive(NO_TIMEOUT);
+    eventServerReceivedInput(recv, connection);
+    (new thread([this, connection]() {
+        this->serverListenToClient(connection);
+    }))->detach(); /// loop the listening without filling the stack
 }
 
 void Game::promptConnectionDetails() {
@@ -490,6 +502,22 @@ void Game::destroyMainMenuUI() {
             ++it;
 }
 
+CircularList<Player*>::iterator& Game::getCurrentPlayerIterator() {
+    return this->currentPlayerIterator;
+}
+
+Game::host_type Game::getHostType() const noexcept {
+    return this->hostType;
+}
+
+ConnectionToServer* Game::getConnectionToServer() {
+    return this->connectionToServer;
+}
+
+vector<ConnectionToClient*>& Game::getConnectionsToClients() {
+    return this->connectionsToClients;
+}
+
 void Game::eventKeyPressed(sf::Keyboard::Key keycode) {
     for(auto& uiObj : uiManager.elements)
         uiObj.second->onKeyPress(keycode);
@@ -550,21 +578,29 @@ void Game::eventWindowResized(sf::Vector2u windowSizeOld) {
 
 void Game::eventMousePressed(sf::Mouse::Button click, sf::Vector2i position) {
     bool objectOnTopPressed = false;
-    if(click == sf::Mouse::Button::Left)
-        for(auto &uiElem : uiManager.elements) {
-            if (!uiElem.second->isInvisible() && uiElem.second->contains(this->coordinatesToPercentage(Vector2f(position)))) {
-                if(!objectOnTopPressed) {
-                   (new thread([uiElem, click]() {
+    if(click == sf::Mouse::Button::Left) {
+        if(uiManager.dice1->contains(this->coordinatesToPercentage(Vector2f(position))))
+            uiManager.dice1->onClick(click);
+        else
+            if(uiManager.dice2->contains(this->coordinatesToPercentage(Vector2f(position))))
+                uiManager.dice2->onClick(click);
+
+        for (auto &uiElem: uiManager.elements) {
+            if (!uiElem.second->isInvisible() &&
+                uiElem.second->contains(this->coordinatesToPercentage(Vector2f(position)))) {
+                if (!objectOnTopPressed) {
+                    (new thread([uiElem, click]() {
                         uiElem.second->onClick(click);
                     }))->detach();
                     objectOnTopPressed = true;
                 }
             } else {
-               (new thread([uiElem,click] () {
+                (new thread([uiElem, click]() {
                     uiElem.second->onClickOutside(click);
                 }))->detach();
             }
         }
+    }
 }
 
 Game::Game() {
@@ -921,9 +957,20 @@ Game::~Game() {
     delete initConnectThread;
 }
 
+void Game::clientListenToServer() {
+    std::string recv = connectionToServer->Receive(NO_TIMEOUT);
+    eventClientReceivedInput(recv);
+    (new thread([this]() {
+        this->clientListenToServer();
+    }))->detach(); /// recursivity without stack fill
+}
+
 void Game::clientEventAllConnected(std::string playerDetails) {
     this->destroyMainMenuUI();
     this->showBoard(playerDetails);
+    (new thread([this]() {
+        this->clientListenToServer();
+    }))->detach();
 }
 
 int handleFatalException(exception &e) {
@@ -954,6 +1001,8 @@ void Game::showBoard(std::string playerDetails) {
         Sprite& boardSpriteRef = sceneManager.getSpriteReference("board");
         boardSpriteRef.setScale((float) getWindowSize().x / boardSpriteRef.getLocalBounds().width,
                        (float) getWindowSize().y / boardSpriteRef.getLocalBounds().height);
+        uiManager.dice1->unhide();
+        uiManager.dice2->unhide();
     }
     catch(exception &e) {
         exit(handleFatalException(e));
@@ -986,6 +1035,17 @@ void Game::showBoard(std::string playerDetails) {
         else
             handleFatalException(e);
     }
+
+    auto whoAtTurnLabel = new Label(
+            (*currentPlayerIterator)->getName() + "'s turn.",
+            {0.5, 0.3},
+            sf::Color(COLOR_PURPLE),
+            5.0f,
+            FONTSIZE_DEFAULT + 10,
+            sf::Color::Yellow,
+            sf::Text::Style::Italic
+    );
+    uiManager.addElement("whosTurnLabel", whoAtTurnLabel);
 }
 
 bool Game::isNameTaken(const std::string &name) const {
@@ -1001,4 +1061,51 @@ bool Game::isNameTaken(const std::string &name) const {
                 return true;
         }
     return false;
+}
+
+const std::string &Game::getHostName() const noexcept {
+    return this->hostname;
+}
+
+void Game::eventServerReceivedInput(const std::string& input, ConnectionToClient *fromWho) {
+    if(input == "request diceroll") {
+        pair <uint8_t,uint8_t> dices;
+        dices = this->diceRoll();
+        fromWho->Send(to_string(dices.first));
+        fromWho->Send(to_string(dices.second));
+        return;
+    }
+
+    if(input.starts_with("broadcast ")) {
+        std::string message = input.substr(input.find_first_of(' ') + 1);
+        broadcastToClients(
+                message,
+                vector<string>{fromWho->getPeerName()}
+        );
+        eventServerReceivedInput(message, fromWho);
+        return;
+    }
+    /// ELSE
+    std::cout << "Unhandled input event from " << fromWho->getPeerName() << " with request *" << input << "*\n";
+}
+
+void Game::eventClientReceivedInput(const std::string &input) {
+    std::cout << "Unhandled input event from server with request *" << input << "*\n";
+}
+
+void Game::broadcastToClients(const std::string& msg, std::vector<std::string> except) {
+    for(auto &connection : connectionsToClients)
+        if(std::find(except.begin(), except.end(), connection->getPeerName()) == except.end())
+            connection->Send(msg);
+}
+
+void Game::broadcastFromClient(const std::string &msg) {
+    connectionToServer->Send("broadcast " + msg);
+}
+
+void Game::broadcast(const std::string& msg) {
+    if(this->hostType == SERVER)
+        broadcastToClients(msg);
+    else
+        broadcastFromClient(msg);
 }

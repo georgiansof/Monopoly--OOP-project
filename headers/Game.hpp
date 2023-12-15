@@ -70,17 +70,29 @@ private:
     sf::Font *defaultFont = nullptr;
 
     std::vector<ConnectionToClient*> connectionsToClients;
+    ConnectionToServer *connectionToServer = nullptr;
     std::thread *initConnectThread = nullptr;
 
     void connectToServer(std::string ip, int port, std::string hostname);
     void waitForClients(int startPort, int numberOfPlayers);
     static void AwaitHandshakeAsync(ConnectionToClient *context);
     static void extractPlayerNames(std::vector<std::string> &playerNames, const std::string& playerDetails);
+    void serverListenToClient(ConnectionToClient* connection);
+    void clientListenToServer();
+    void broadcastToClients(const std::string& msg, std::vector<std::string> except = std::vector<std::string>());
+    void broadcastFromClient(const std::string& msg);
 public:
+    void broadcast(const std::string& msg);
+
     ResourceManager* getResourceManagerPtr() noexcept;
     SceneManager* getSceneManagerPtr() noexcept;
     UIManager* getuiManagerPtr() noexcept;
     static Game * getInstancePtr();
+    CircularList<Player*>::iterator& getCurrentPlayerIterator();
+    host_type getHostType() const noexcept;
+    ConnectionToServer* getConnectionToServer();
+    std::vector<ConnectionToClient*>& getConnectionsToClients();
+    const std::string& getHostName() const noexcept;
 
     sf::Vector2<unsigned int> getWindowSize() const;
     const sf::Font& getDefaultFont() const;
@@ -95,6 +107,8 @@ public:
     void eventWindowResized(sf::Vector2u windowSizeOld);
     void eventMousePressed(sf::Mouse::Button click, sf::Vector2i position);
     void eventTextEntered(char chr);
+    void eventServerReceivedInput(const std::string& input, ConnectionToClient *from);
+    void eventClientReceivedInput(const std::string& input);
     void clientEventAllConnected(std::string playerDetails);
 
     void addTiles();

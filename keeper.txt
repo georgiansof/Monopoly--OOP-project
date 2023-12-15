@@ -10,15 +10,18 @@ detached threads point to exit
 
 one/many means how many of child instances appear for a parent instance
 
-main (one) ----------------------------------------> EXIT
-    |                                                 ^
-    |                                                 ^
-    --- onclickdown (many) ---------------------------^
-    |       |                                         ^
-    |       |-- connect & waitStart (one) ------------^
-    |                                                 ^
-    |                                                 ^
-    -   onclickrelease (many) ------------------------^
+main (one) ---------------------------------------------> EXIT
+    |                                                      ^
+    |                                                      ^
+    --- onclickdown (many) --------------------------------^
+    |       |                                              ^
+    |       |-- connect & waitStart (one) -----------------^
+    |       |                                              ^
+    |       |                                              ^
+    |    serverListenToClient(many, autogenerative)--------^
+    |                                                      ^
+    |                                                      ^
+    -   onclickrelease (many) -----------------------------^
 
 
 known problems:
