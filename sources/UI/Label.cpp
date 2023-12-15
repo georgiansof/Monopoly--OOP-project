@@ -67,3 +67,9 @@ void Label::draw(sf::RenderWindow *window) {
 }
 
 void Label::setText(const std::string& textstr) {this->text.setString(textstr);}
+void Label::appendText(const std::string& addStr) {
+    this->text.setString(this->text.getString() + addStr);
+}
+std::string Label::getText() const noexcept {
+    return this->text.getString();
+}

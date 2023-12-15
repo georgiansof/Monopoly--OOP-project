@@ -14,7 +14,7 @@
 class TextEntry;
 
 class Label : public UIElement {
-public:sf::Text text;
+    sf::Text text;
 public:
     Label() = delete;
     Label(const std::string& text,
@@ -44,6 +44,8 @@ public:
     void onKeyPress(sf::Keyboard::Key key) override;
     void draw(sf::RenderWindow *window) override;
     void setText(const std::string& textstr);
+    void appendText(const std::string& addStr);
+    std::string getText() const noexcept;
 };
 
 #endif //OOP_LABEL_HPP

@@ -9,3 +9,8 @@ main (one) ----------------------------------------> EXIT
     -   onclickdown (many) ---------------------------^
     |                                                 ^
     -   onclickrelease (many) ------------------------^
+
+
+known problems:
+- window resize breaks contains() function
+   > possible solution: store given size at construction (percent from screensize)

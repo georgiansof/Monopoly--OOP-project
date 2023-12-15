@@ -15,6 +15,14 @@ using namespace std;
 void Game::AwaitHandshakeAsync(ConnectionToClient *context) {
     context->AwaitHandshake();
     std::cout<< "Port " << context->getPort()<< " connected to " << context->getPeerName() << '\n';
+
+    dynamic_cast<Label*>
+        (Game::getInstancePtr()->
+            uiManager.elements.
+                find("mainmenu_playersConnected")->second)
+                    ->appendText(context->getPeerName()
+                                    + ":" + to_string(context->getPort())
+                                    + "\n");
 }
 
 void Game::connectToServer(std::string ip, int port, std::string hostname) {
@@ -22,8 +30,6 @@ void Game::connectToServer(std::string ip, int port, std::string hostname) {
     std::cout << ip << ' ' << port << '\n';
 
     auto srv = new ConnectionToServer(ip, port, hostname);
-    std::cout << srv->Receive();
-
     //srv->Send("Client closing connection\n");
 
     //delete srv;
@@ -39,8 +45,6 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
 
     std::cout<<'\n';
 
-
-
     std::vector<std::thread*> threads;
     for(int i = 0; i < numberOfPlayers; ++i)
         threads.push_back(new std::thread(Game::AwaitHandshakeAsync, connectionsToClients[i]));
@@ -49,15 +53,23 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
         threads[i]->join();
         delete threads[i];
     }
+
     threads.clear();
     std::cout<<'\n';
 
+    std::string playerDetails(this->hostname);
     for(int i = 0; i < numberOfPlayers; ++i) {
-        connectionsToClients[i]->Send("test\n");
-        std::cout << "Message sent to " << connectionsToClients[i]->getPeerAddress() << ':' << connectionsToClients[i]->getPort() << '\n';
+        playerDetails += "\n" + connectionsToClients[i]->getPeerName();
     }
-    std::cout<<'\n';
 
+    for(int i = 0; i < numberOfPlayers; ++i) {
+        connectionsToClients[i]->Send(std::string(ALL_CONNECTED_MSG) + "\n" + playerDetails);
+        std::cout << "Message sent to " << connectionsToClients[i]->getPeerName() << ':' << connectionsToClients[i]->getPort() << '\n';
+    }
+
+    std::cout<<"All players connected.\n";
+    this->destroyMainMenuUI();
+    this->showBoard(playerDetails);
 
     /*for(int i = 0; i < numberOfPlayers; ++i)
         std::cout << connectionsToClients[i]->Receive();
@@ -86,6 +98,9 @@ void Game::promptConnectionDetails() {
     portte->setText("");
     switch(hostType) {
         case SERVER:
+            namete->setText("SERVER");
+            ipte->setText("50000");
+            portte->setText("3");
             iplbl->setText("Start port (min 49152, max 65535)");
             ipte->setMaxLength(5);
             ipte->setCharType(TextEntry::chrType::NUMBERS);
@@ -94,6 +109,9 @@ void Game::promptConnectionDetails() {
             portte->setCharType(TextEntry::chrType::NUMBERS);
             break;
         case CLIENT:
+            namete->setText("CLIENT");
+            ipte->setText("127.0.0.1");
+            portte->setText("50000");
             iplbl->setText("Server IP");
             portlbl->setText("Communication Port");
             ipte->setMaxLength(15);
@@ -127,7 +145,7 @@ void Game::constructMainMenuUI() {
     auto nameEntry = new TextEntry({0.2,0.15},
                                  this->coordinateToPercentage(150.0f, Game::axis::X),
                                  15,
-                                 TextEntry::chrType::LETTERS,
+                                 TextEntry::chrType::LETTERS | TextEntry::chrType::NUMBERS,
                                  sf::Color::Blue,
                                  3.0f,
                                  sf::Color::Red,
@@ -235,6 +253,13 @@ void Game::constructMainMenuUI() {
                                   sf::Color::White,
                                   sf::Text::Style::Bold);
 
+    auto playersConnectedLabel = new Label(
+            "Players connected: \n",
+            {0.3, 0.15});
+
+    auto clientWaitingLabel = new Label(
+            "", /// set later
+            {0.3, 0.15});
 
     uiManager.addElement("mainmenu_ipEntry",ipEntry);
     uiManager.addElement("mainmenu_ipLabel",ipLabel);
@@ -248,7 +273,9 @@ void Game::constructMainMenuUI() {
     uiManager.addElement("mainmenu_error_message", errorMessage);
     uiManager.addElement("mainmenu_nameEntry", nameEntry);
     uiManager.addElement("mainmenu_nameLabel", nameLabel);
+    uiManager.addElement("mainmenu_playersConnected", playersConnectedLabel);
 
+    uiManager.addElement("mainmenu_clientWaiting", clientWaitingLabel);
     nameEntry->hide();
     nameLabel->hide();
     ipEntry->hide();
@@ -258,6 +285,8 @@ void Game::constructMainMenuUI() {
     backChooseHost->hide();
     submitConnectionDetails->hide();
     errorMessage->hide();
+    playersConnectedLabel->hide();
+    clientWaitingLabel->hide();
 }
 
 void Game::mainMenuSubmitButtonAction() {
@@ -288,6 +317,14 @@ void Game::mainMenuSubmitButtonAction() {
     Label *errorLbl = dynamic_cast<Label*>
     (Game::getInstancePtr()->uiManager.elements
                     .find("mainmenu_error_message")->second);
+
+    Label *playersConnectedLbl = dynamic_cast<Label*>
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_playersConnected")->second);
+
+    Label *clientWaitingLbl = dynamic_cast<Label*>
+    (Game::getInstancePtr()->uiManager.elements
+                    .find("mainmenu_clientWaiting")->second);
 
     if(ipte->getText().empty() || portte->getText().empty() || namete->getText().empty()) {
         errorLbl->setText("All entries are mandatory.");
@@ -320,6 +357,7 @@ void Game::mainMenuSubmitButtonAction() {
                 errorLbl->showForSeconds(ERROR_SHOWTIME);
                 return;
             }
+            playersConnectedLbl->unhide();
             break;
         }
         case CLIENT: {
@@ -338,6 +376,8 @@ void Game::mainMenuSubmitButtonAction() {
                 errorLbl->showForSeconds(ERROR_SHOWTIME);
                 return;
             }
+            clientWaitingLbl->setText("Trying to connect to server.");
+            clientWaitingLbl->unhide();
             break;
         }
         default:
@@ -356,13 +396,16 @@ void Game::mainMenuSubmitButtonAction() {
 
     auto game = Game::getInstancePtr();
 
-    if(game->hostType == CLIENT)
+    if(game->hostType == CLIENT) {
         game->connectToServer(ip, port, name);
+        clientWaitingLbl->setText("Waiting for everyone to connect.");
+    }
 
     if(game->hostType == SERVER) {
         game->hostname = name;
         game->waitForClients(startPort, numberOfPlayers - 1);
     }
+
 }
 
 void Game::mainMenuBackButtonAction() {
@@ -871,4 +914,86 @@ float Game::percentageToCoordinate(float perc, Game::axis which) const {
 
 Game::~Game() {
     delete initConnectThread;
+}
+
+void Game::clientEventAllConnected(std::string playerDetails) {
+    this->destroyMainMenuUI();
+    this->showBoard(playerDetails);
+}
+
+int handleFatalException(exception &e) {
+    std::cerr << e.what();
+    auto fatalExceptCast = dynamic_cast<FatalException*>(&e);
+    if(fatalExceptCast == nullptr)
+        return UNHANDLED_ERROR_CODE;
+    else
+        return fatalExceptCast->getExitCode();
+}
+
+void Game::extractPlayerNames(std::vector<std::string> &playerNames, const std::string& playerDetails) {
+    char cstr[playerDetails.size() + 1];
+    strcpy(cstr, playerDetails.c_str());
+    char *p = strtok(cstr, "\n");
+    while(p) {
+        std::cout<<p<<'\n';
+        playerNames.emplace_back(std::string(p));
+        p = strtok(nullptr, "\n");
+    }
+}
+
+void Game::showBoard(std::string playerDetails) {
+    try {
+        sceneManager.addSprite("board", resourceManager.getTexture("board"));
+        sceneManager.addSound("coin flip", resourceManager.getAudio("coin flip"));
+        /// scale board to screen
+        Sprite& boardSpriteRef = sceneManager.getSpriteReference("board");
+        boardSpriteRef.setScale((float) getWindowSize().x / boardSpriteRef.getLocalBounds().width,
+                       (float) getWindowSize().y / boardSpriteRef.getLocalBounds().height);
+    }
+    catch(exception &e) {
+        exit(handleFatalException(e));
+    }
+
+    /// ADD TILES
+
+    try {this->addTiles();}
+    catch (exception &e) {
+        exit(handleFatalException(e));
+    }
+    ///  ADD PLAYERS
+    try {
+        vector<sf::Color> colors {Color::Black,
+                                  Color::Yellow,
+                                  Color::Green,
+                                  Color::Red,
+                                  Color::Magenta,
+                                  Color::Blue,
+                                  Color::Cyan,
+                                  Color::White};
+        vector<std::string> playerNames;
+        extractPlayerNames(playerNames, playerDetails);
+        for(int i = 0; i < playerNames.size(); ++i)
+            this->addPlayer(new Player(playerNames[i], colors[i]));
+    }
+    catch(std::exception &e) {
+        if(dynamic_cast<FatalException*>(&e) == nullptr)
+            std::cerr << e.what();
+        else
+            handleFatalException(e);
+    }
+}
+
+bool Game::isNameTaken(const std::string &name) const {
+    if(name == this->hostname)
+        return true;
+
+    bool theOneAddedFound = false;
+    for(auto connection : connectionsToClients)
+        if(connection->getPeerName() == name) {
+            if(!theOneAddedFound)
+                theOneAddedFound = true;
+            else
+                return true;
+        }
+    return false;
 }

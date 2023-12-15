@@ -20,15 +20,6 @@ sf::Texture* Dice::textures[6];
 using namespace std;
 using namespace sf;
 
-int handleFatalException(exception &e) {
-    std::cerr << e.what();
-    auto fatalExceptCast = dynamic_cast<FatalException*>(&e);
-    if(fatalExceptCast == nullptr)
-        return UNHANDLED_ERROR_CODE;
-    else
-        return fatalExceptCast->getExitCode();
-}
-
 
 int main() {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -53,14 +44,6 @@ int main() {
     uiManager->hideDices();
     game->constructMainMenuUI();
 
-    /*Button b("buton",{0.4f, 0.3f},
-             {0.1f,0.05f},
-             sf::Color::Magenta,
-             true, resourceManager->getFont("arial"),
-             sf::Color::Black,
-             sf::Text::Style::Regular, 20);
-    uiManager->addElement(&b);*/
-
     ///--------------------------------
     /*
     try {
@@ -80,7 +63,6 @@ int main() {
     catch (exception &e) {
         return handleFatalException(e);
     }
-
     ///  ADD PLAYERS
     try {
         game->addPlayer(new Player("Gigi", Color(0, 0, 0), PLAYER_START_MONEY));
@@ -100,11 +82,6 @@ int main() {
         else
             handleFatalException(e);
     }
-    ///-----------------------------------
-
-    cout<<*game;
-    cout<<*resourceManager;
-    cout<<*sceneManager;
     */
     game->loop();
     Game::clearInstance();

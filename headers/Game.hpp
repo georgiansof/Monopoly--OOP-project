@@ -15,6 +15,7 @@
 #include <chrono>
 #include <thread>
 #include <vector>
+#include <cstring>
 
 #include "external/json.hpp" /// https://github.com/nlohmann/json/
 
@@ -68,10 +69,10 @@ private:
     std::vector<ConnectionToClient*> connectionsToClients;
     std::thread *initConnectThread = nullptr;
 
-
     void connectToServer(std::string ip, int port, std::string hostname);
     void waitForClients(int startPort, int numberOfPlayers);
     static void AwaitHandshakeAsync(ConnectionToClient *context);
+    static void extractPlayerNames(std::vector<std::string> &playerNames, const std::string& playerDetails);
 public:
     ResourceManager* getResourceManagerPtr() noexcept;
     SceneManager* getSceneManagerPtr() noexcept;
@@ -91,9 +92,11 @@ public:
     void eventWindowResized();
     void eventMousePressed(sf::Mouse::Button click, sf::Vector2i position);
     void eventTextEntered(char chr);
+    void clientEventAllConnected(std::string playerDetails);
 
     void addTiles();
     void addPlayer(Player *playerPtr);
+    bool isNameTaken(const std::string& name) const;
 
     static std::pair<uint8_t,uint8_t> diceRoll();
     void nextPlayer();
@@ -113,6 +116,8 @@ public:
     static void mainMenuClientButtonAction();
     static void mainMenuBackButtonAction();
     static void mainMenuSubmitButtonAction();
+
+    void showBoard(std::string playerDetails);
 };
 
 #endif //OOP_GAME_H

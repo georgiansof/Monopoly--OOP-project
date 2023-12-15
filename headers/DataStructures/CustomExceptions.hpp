@@ -34,6 +34,22 @@ public:
     [[nodiscard]] int getExitCode() const noexcept {return exit_code;}
 };
 
+class NameTakenException : public FatalException {
+public:
+    explicit NameTakenException(int exit_code = NAME_TAKEN_ERROR_CODE) : FatalException(exit_code) {}
+    [[nodiscard]] const char* what() const noexcept override {
+        return "Someone already connected with this name!\n";
+    }
+};
+
+class ConnectionTimedOutException : public FatalException {
+public:
+    explicit ConnectionTimedOutException(int exit_code = CONNECTION_TIMED_OUT_ERROR_CODE) : FatalException(exit_code) {}
+    [[nodiscard]] const char* what() const noexcept override {
+        return "Server did not respond. You might be trying to connect to a port that was already occupied !\n";
+    }
+};
+
 class SwitchCaseNotCovered : public FatalException {
 public:
     explicit SwitchCaseNotCovered(int exit_code = SWITCH_CASE_NOT_COVERED_ERROR_CODE) : FatalException(exit_code) {}

@@ -2,6 +2,7 @@
 #include <cstring>
 #include "../../headers/Networking/Connection.hpp"
 #include <chrono>
+#include "../../headers/Game.hpp"
 
 int Connection::count = 0;
 std::map<int, std::thread*> Connection::threads;
@@ -17,15 +18,23 @@ std::string Connection::Receive(float timeout, int MAXLEN) {
     int bytesReturned = 0;
     auto start = std::chrono::steady_clock::now();
     std::chrono::duration<float> timer;
+    SDLNet_SocketSet socketSet;
+    socketSet = SDLNet_AllocSocketSet(1);
+    SDLNet_TCP_AddSocket(socketSet, remote);
     while(true) {
-        bytesReturned = SDLNet_TCP_Recv(remote, buffer, MAXLEN);
-        if(bytesReturned > 0)
-            return std::string(buffer);
-        timer = std::chrono::steady_clock::now() - start;
-        if(timer.count() > timeout)
-            return "timeout";
+        if(SDLNet_CheckSockets(socketSet, (int)(timeout * 1000))) {
+            bytesReturned = SDLNet_TCP_Recv(remote, buffer, MAXLEN);
+            if (bytesReturned > 0)
+                return std::string(buffer);
+        }
+        if(timeout != NO_TIMEOUT) {
+            timer = std::chrono::steady_clock::now() - start;
+            if (timer.count() > timeout)
+                return "timeout";
+        }
     }
 }
+
 
 
 ConnectionToServer::ConnectionToServer(std::string address, int port, std::string self_name, int MAXREQ) {
@@ -37,7 +46,21 @@ ConnectionToServer::ConnectionToServer(std::string address, int port, std::strin
     remote = SDLNet_TCP_Open(&ip);
 
     this->Send(self_name);
-    std::cout << this->Receive();
+    std::string recvmsg = this->Receive(2.0f);
+    if(recvmsg == "timeout")
+        throw ConnectionTimedOutException();
+    if(recvmsg == "nametaken")
+        throw NameTakenException();
+
+    (new std::thread([this] () {
+        /// wait for signal that everyone connected
+        std::string recv = this->Receive(NO_TIMEOUT);
+        if(recv.starts_with(ALL_CONNECTED_MSG)) {
+            Game::getInstancePtr()->clientEventAllConnected(
+                    recv.substr(recv.find_first_of('\n') + 1)
+                    );
+        }
+    }))->detach();
 }
 
 void AwaitClientWrapper(ConnectionToClient* context) {
@@ -50,10 +73,17 @@ void ConnectionToClient::AwaitClient() {
         remote = SDLNet_TCP_Accept(local);
     while(!remote);
     SDLNet_TCP_Recv(remote, buffer, NAMEMAXLEN);
-    remote_name = std::string(buffer);
-    char success_text[] = "Authentication successful\n";
+    this->remote_name = std::string(buffer);
+    char reply[] = "Authentication successful\n";
+    bool retry = false;
+    if(Game::getInstancePtr()->isNameTaken(remote_name)) {
+        strcpy(reply, "nametaken");
+        retry = true;
+    }
 
-    SDLNet_TCP_Send(remote, success_text, strlen(success_text) + 1);
+    SDLNet_TCP_Send(remote, reply, strlen(reply) + 1);
+    if(retry)
+        ConnectionToClient::AwaitClient();
 }
 
 
@@ -64,6 +94,7 @@ ConnectionToClient::ConnectionToClient(int port) {
     SDLNet_ResolveHost(&ip, nullptr, port);
     local = SDLNet_TCP_Open(&ip);
     connectThread = new std::thread(AwaitClientWrapper, this);
+
     auto result = threads.insert(std::make_pair(port, connectThread));
     //if(result.second == false)
         ///throw ...

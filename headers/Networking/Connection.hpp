@@ -7,9 +7,9 @@
 #include "../../headers/external/SDL2/SDL.h"
 #include "../../headers/external/SDL2/SDL_net.h"
 #include <thread>
+#include "../../constants.hpp"
 
 #define NAMEMAXLEN 50
-#define TIMEOUT_THRESHOLD 5.0f
 
 class Connection {
 protected:
@@ -21,11 +21,11 @@ protected:
 public:
     Connection() = default;
     virtual ~Connection();
-    std::string Receive(float timeout = TIMEOUT_THRESHOLD, int MAXLEN = 1024);
+    std::string Receive(float timeout = DEFAULT_TIMEOUT, int MAXLEN = 1024);
     void Send(std::string text);
     static int getConnectionCount();
-    int getPort() const;
-    std::string getPeerName() const;
+    [[nodiscard]] int getPort() const;
+    [[nodiscard]] std::string getPeerName() const;
 };
 
 class ConnectionToServer : public Connection {
