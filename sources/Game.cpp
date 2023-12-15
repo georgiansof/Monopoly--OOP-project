@@ -68,6 +68,7 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
     std::cout<<"All players connected.\n";
     this->destroyMainMenuUI();
     this->showBoard(playerDetails);
+    this->window.setTitle(std::string("MonOOPoly (role SERVER) playing as ") + hostname + " colored " + hostColorName);
     for(auto connection : connectionsToClients)
         (new thread([this, connection]() {
             this->serverListenToClient(connection);
@@ -409,16 +410,12 @@ void Game::mainMenuSubmitButtonAction() {
     game->hostname = name;
 
     if(game->hostType == CLIENT) {
-        game->window.setTitle(std::string("MonOOPoly (role CLIENT) playing as ") + name);
         game->connectToServer(ip, port, name);
         clientWaitingLbl->setText("Waiting for everyone to connect.");
     }
 
-    if(game->hostType == SERVER) {
-        game->window.setTitle(std::string("MonOOPoly (role SERVER) playing as ") + name);
+    if(game->hostType == SERVER)
         game->waitForClients(startPort, numberOfPlayers - 1);
-    }
-
 }
 
 void Game::mainMenuBackButtonAction() {
@@ -934,6 +931,7 @@ void Game::clientListenToServer() {
 void Game::clientEventAllConnected(std::string playerDetails) {
     this->destroyMainMenuUI();
     this->showBoard(playerDetails);
+    this->window.setTitle(std::string("MonOOPoly (role CLIENT) playing as ") + this->hostname + " colored " + this->hostColorName);
     (new thread([this]() {
         this->clientListenToServer();
     }))->detach();
@@ -990,10 +988,15 @@ void Game::showBoard(std::string playerDetails) {
                                   Color::Blue,
                                   Color::Cyan,
                                   Color::White};
+
         vector<std::string> playerNames;
         extractPlayerNames(playerNames, playerDetails);
-        for(int i = 0; i < playerNames.size(); ++i)
-            this->addPlayer(new Player(playerNames[i], colors[i]));
+        for(int i = 0; i < playerNames.size(); ++i) {
+            auto plyr = new Player(playerNames[i], colors[i]);
+            this->addPlayer(plyr);
+            if(plyr->getName() == hostname)
+                hostColorName = plyr->getColorName();
+        }
     }
     catch(std::exception &e) {
         if(dynamic_cast<FatalException*>(&e) == nullptr)

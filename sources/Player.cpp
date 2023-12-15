@@ -37,12 +37,31 @@ Color Player::getColor() const noexcept {
     return this->name;
 }
 
+void Player::setColorName(sf::Color _color) {
+    vector<pair<sf::Color, std::string>> colors {
+            {Color::Black, "Black"},
+            {Color::Yellow, "Yellow"},
+            {Color::Green, "Green"},
+            {Color::Red, "Red"},
+            {Color::Magenta, "Magenta"},
+            {Color::Blue, "Blue"},
+            {Color::Cyan, "Cyan"},
+            {Color::White, "White"}
+    };
+    for(auto &colorPair : colors)
+        if(colorPair.first == _color) {
+            this->colorName = colorPair.second;
+            return;
+        }
+}
+
 Player::Player(const Player& other) : PlayerEconomy(other), PlayerPiece(other) {
     this->boardPosition = other.boardPosition;
     this->name = other.name;
     this->color = other.color;
     this->indexInsideTile = other.indexInsideTile;
     this->boardPieceShapePtr = new sf::CircleShape(*other.boardPieceShapePtr);
+    this->colorName = other.colorName;
 }
 
 
@@ -52,12 +71,14 @@ Player::Player(Player&& other) noexcept : PlayerEconomy(other), PlayerPiece(othe
     this->color = other.color;
     this->indexInsideTile = other.indexInsideTile;
     this->boardPieceShapePtr = other.boardPieceShapePtr;
+    this->colorName = other.colorName;
 
     other.boardPosition = -1;
     other.name = "";
     other.color = sf::Color::Transparent;
     other.indexInsideTile = -1;
     other.boardPieceShapePtr = nullptr;
+    other.colorName = "";
 }
 
 Player& Player::operator=(const Player& other) {
@@ -140,4 +161,8 @@ int Player::getTimesRolledInJail() const noexcept {
 
 bool Player::isInJail() const noexcept {
     return this->inJail;
+}
+
+const std::string& Player::getColorName() const noexcept {
+    return this->colorName;
 }

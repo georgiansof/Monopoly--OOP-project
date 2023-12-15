@@ -53,6 +53,7 @@ private:
 
     std::string details;
     std::string hostname;
+    std::string hostColorName;
     sf::RenderWindow window;
     sf::Vector2u windowSize;
     uint32_t sizeMultiplierSinceStartX = 1;

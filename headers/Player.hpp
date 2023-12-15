@@ -38,6 +38,8 @@ class Player : public PlayerEconomy, public PlayerPiece {
     bool inJail = false;
     int timesRolledInJail = 0;
     std::pair<uint16_t,bool> incrementPosition(int amount = 1) noexcept;
+    std::string colorName;
+    void setColorName(sf::Color color);
 public:
     Player(std::string name, sf::Color color, uint32_t money = PLAYER_START_MONEY,
            uint16_t boardPosition = 0, uint8_t indexInsideTile = 0,
@@ -45,14 +47,14 @@ public:
                 : PlayerEconomy(money),
                    PlayerPiece(shapePtr, indexInsideTile),
                    name(std::move(name)), color(color), boardPosition(boardPosition)
-                   {}
+                   {setColorName(color);}
     Player(const char* name, sf::Color color, uint32_t money = PLAYER_START_MONEY,
            uint16_t boardPosition = 0, uint8_t indexInsideTile = 0,
            sf::CircleShape *shapePtr = nullptr)
                 : PlayerEconomy(money),
                    PlayerPiece(shapePtr, indexInsideTile),
                    name(name), color(color), boardPosition(boardPosition)
-                   {}
+                   {setColorName(color);}
     Player() = delete;
 
     Player(const Player& other);
@@ -75,6 +77,7 @@ public:
     void sendToJail();
     void moveSpaces(int amount);
     void incrementTimesRolledInJail();
+    const std::string& getColorName() const noexcept;
     int getTimesRolledInJail() const noexcept;
 };
 
