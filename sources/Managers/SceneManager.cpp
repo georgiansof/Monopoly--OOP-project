@@ -16,7 +16,7 @@ SceneManager::~SceneManager() {
     shapePointers.clear();
 }
 
-sf::Sprite & SceneManager::addSprite(const string& name, const Texture & texture) {
+[[maybe_unused]] sf::Sprite & SceneManager::addSprite(const string& name, const Texture & texture) {
     auto pairPtr = new pair<string, Sprite>;
     pairPtr->first = string(name);
     pairPtr->second.setTexture(texture);
@@ -27,7 +27,7 @@ sf::Sprite & SceneManager::addSprite(const string& name, const Texture & texture
         throw SceneAddFailureException(name, SceneAddFailureException::SPRITE);
 }
 
-[[maybe_unused]] sf::Sprite & SceneManager::addSprite(const std::string & name, sf::Sprite * spritePtr) {
+[[maybe_unused]] sf::Sprite & SceneManager::addSprite(const std::string & name, const sf::Sprite * spritePtr) {
     auto pairPtr = new pair<string, Sprite>;
     pairPtr->first = name;
     pairPtr->second = *spritePtr;
@@ -38,7 +38,7 @@ sf::Sprite & SceneManager::addSprite(const string& name, const Texture & texture
         throw SceneAddFailureException(name, SceneAddFailureException::SPRITE);
 }
 
-sf::Sound & SceneManager::addSound(const string& name, const SoundBuffer & audio) {
+[[maybe_unused]] sf::Sound & SceneManager::addSound(const string& name, const SoundBuffer & audio) {
     auto pairPtr = new pair<string, Sound>;
     pairPtr->first = string(name);
     pairPtr->second.setBuffer(audio);
@@ -60,7 +60,7 @@ sf::Sound & SceneManager::addSound(const string& name, const SoundBuffer & audio
         throw SceneAddFailureException(name, SceneAddFailureException::SOUND);
 }
 
-Sprite & SceneManager::getSpriteReference(const string& name) {
+[[maybe_unused]] Sprite & SceneManager::getSpriteReference(const string& name) {
     auto foundPair = sprites.find(name);
     if(foundPair != sprites.end())
         return foundPair->second;
@@ -97,7 +97,7 @@ ostream& operator<< (ostream & os, const SceneManager & sceneManager) noexcept {
     return os;
 }
 
-sf::Shape & SceneManager::addShape(const std::string & name, sf::Shape * shapePtr) {
+[[maybe_unused]] sf::Shape & SceneManager::addShape(const std::string & name, sf::Shape * shapePtr) {
     auto insertionResult = shapePointers.emplace(name,shapePtr);
     if(insertionResult.second)
         return *insertionResult.first->second;

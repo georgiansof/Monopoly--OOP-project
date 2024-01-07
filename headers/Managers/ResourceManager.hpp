@@ -18,13 +18,13 @@ private:
     ~ResourceManager();
     friend Game;
 public:
-    const sf::Texture & addTexture(const std::string &name, const std::string & path);
-    const sf::SoundBuffer & addAudio(const std::string& name, const std::string & path);
-    const sf::Font & addFont(const std::string& name, const std::string & path);
+    [[maybe_unused]] const sf::Texture & addTexture(const std::string &name, const std::string & path);
+    [[maybe_unused]] const sf::SoundBuffer & addAudio(const std::string& name, const std::string & path);
+    [[maybe_unused]] const sf::Font & addFont(const std::string& name, const std::string & path);
 
-    [[nodiscard]] const sf::Texture & getTexture(const std::string& name) const;
-    [[nodiscard]] const sf::SoundBuffer & getAudio(const std::string& name) const;
-    [[nodiscard]] const sf::Font & getFont(const std::string& name) const;
+    [[maybe_unused]] [[nodiscard]] const sf::Texture & getTexture(const std::string& name) const;
+    [[maybe_unused]] [[nodiscard]] const sf::SoundBuffer & getAudio(const std::string& name) const;
+    [[maybe_unused]] [[nodiscard]] const sf::Font & getFont(const std::string& name) const;
     friend std::ostream& operator<< (std::ostream& os, const ResourceManager & resourceManager) noexcept;
 };
 

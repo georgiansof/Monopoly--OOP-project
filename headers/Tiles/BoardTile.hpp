@@ -22,9 +22,9 @@ protected:
     explicit BoardTile(uint16_t boardPosition, BoardTile::Type type);
     [[maybe_unused]] [[nodiscard]] uint16_t getBoardPosition() const noexcept;
 public:
-    std::pair<sf::Vector2f, uint8_t> addPlayer(Player *playerPtr); /// returns the position coordinates and index
-    void removePlayer(Player *playerPtr);
-    void removePlayer(uint8_t positionInsideTile);
+    [[maybe_unused]] std::pair<sf::Vector2f, uint8_t> addPlayer(Player *playerPtr); /// returns the position coordinates and index
+    [[maybe_unused]] void removePlayer(const Player *playerPtr);
+    [[maybe_unused]] void removePlayer(uint8_t positionInsideTile);
     BoardTile() = delete;
     virtual ~BoardTile() = default;
     virtual void onVisit(Player* plyr) = 0;

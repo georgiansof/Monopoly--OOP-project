@@ -14,8 +14,8 @@
 class Board {
     std::vector<BoardTile*> tiles;
 public:
-    BoardTile& getTile(int boardPosition);
-    void AddTile(BoardTile *boardTilePtr);
+    [[maybe_unused]] BoardTile& getTile(int boardPosition);
+    [[maybe_unused]] void AddTile(BoardTile *boardTilePtr);
     [[nodiscard]] int getTileCount() const;
 };
 

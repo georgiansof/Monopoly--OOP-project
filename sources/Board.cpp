@@ -3,14 +3,14 @@
 //
 #include "../headers/Board.hpp"
 
-BoardTile& Board::getTile(int boardPosition) {
+[[maybe_unused]] BoardTile& Board::getTile(int boardPosition) {
     return *this->tiles[boardPosition % 40];
 }
 
-void Board::AddTile(BoardTile *boardTilePtr) {
+[[maybe_unused]] void Board::AddTile(BoardTile *boardTilePtr) {
     this->tiles.push_back(boardTilePtr);
 }
 
-int Board::getTileCount() const {
+[[maybe_unused]] int Board::getTileCount() const {
     return (int)this->tiles.size();
 }

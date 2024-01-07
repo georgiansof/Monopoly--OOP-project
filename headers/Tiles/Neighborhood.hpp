@@ -23,7 +23,7 @@ public:
     Neighborhood() = delete;
     ~Neighborhood() override = default;
     [[nodiscard]] bool isSmallNeighborHood() const;
-    void addHouse();
+    [[maybe_unused]] void addHouse();
 };
 
 #endif //OOP_NEIGHBORHOOD_HPP

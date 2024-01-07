@@ -21,7 +21,7 @@ Vector2f jailOutsidePlayerPositions[8] = {
         {0.01,0.11}
 };
 
-unsigned short BoardTile::getBoardPosition() const noexcept {
+[[maybe_unused]] unsigned short BoardTile::getBoardPosition() const noexcept {
     return this->boardPosition;
 }
 
@@ -38,7 +38,6 @@ BoardTile::BoardTile(uint16_t boardPosition, BoardTile::Type type)
         case PROPERTY:
         case TAX:
         case CHANCE:
-        {
             if(boardPosition >= 1 && boardPosition <= 9)
                 for(int x_ind = 0; x_ind < 2; ++x_ind)
                     for(int y_ind = 0; y_ind < 4; ++y_ind)
@@ -72,9 +71,7 @@ BoardTile::BoardTile(uint16_t boardPosition, BoardTile::Type type)
                                 );
 
             break;
-        }
         case PARK:
-        {
                 for(int x_ind = 0; x_ind < 3; ++x_ind)
                     for(int y_ind = 0; y_ind < 3; ++y_ind) {
                         float xOffset = bigTilePlayerPositionOffsets[x_ind] + borderSize;
@@ -86,14 +83,11 @@ BoardTile::BoardTile(uint16_t boardPosition, BoardTile::Type type)
                     }
 
                 break;
-        }
         case JAIL:
-        {
             for(int i = 0; i < 8; ++i)
                 playerPositions[i] = {jailOutsidePlayerPositions[i].x, 1.0f - jailOutsidePlayerPositions[i].y};
 
             break;
-        }
     }
 }
 
@@ -106,11 +100,11 @@ std::pair<sf::Vector2f, uint8_t> BoardTile::addPlayer(Player *playerPtr) {
     throw std::runtime_error("Under BoardTile::addPlayer, player position inside tile overflow!");
 }
 
-void BoardTile::removePlayer(uint8_t positionInsideTile) {
+[[maybe_unused]] void BoardTile::removePlayer(uint8_t positionInsideTile) {
     occupiedPositions[positionInsideTile] = nullptr;
 }
 
-void BoardTile::removePlayer(Player *playerPtr) {
+[[maybe_unused]] void BoardTile::removePlayer(const Player *playerPtr) {
     for(auto& p : this->occupiedPositions)
         if(p == playerPtr)
             p = nullptr;

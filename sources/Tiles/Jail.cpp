@@ -13,10 +13,10 @@ Jail::Jail() : BoardTile(10, BoardTile::JAIL) {
                     borderSize + jailTilePlayerPositionsInsideOffsets[x_ind],
                     1.0f - borderSize - jailTilePlayerPositionsInsideOffsets[y_ind]
                     );
-    for(int i = 0; i < 9; ++i)
-        occupiedPositionsImprisoned[i] = nullptr;
+    for(auto & pos : occupiedPositionsImprisoned)
+        pos = nullptr;
 }
-std::pair<sf::Vector2f, uint8_t> Jail::addPlayerToJail(Player *playerPtr) {
+[[maybe_unused]] std::pair<sf::Vector2f, uint8_t> Jail::addPlayerToJail(Player *playerPtr) {
     for(int i = 0 ; i < 9; ++i)
         if(!occupiedPositionsImprisoned[i]) {
             occupiedPositionsImprisoned[i] = playerPtr;
@@ -29,7 +29,7 @@ std::pair<sf::Vector2f, uint8_t> Jail::addPlayerToJail(Player *playerPtr) {
     occupiedPositionsImprisoned[positionInsideTileJailed] = nullptr;
 }
 
-void Jail::removePlayerFromJail(Player *playerPtr) {
+[[maybe_unused]] void Jail::removePlayerFromJail(const Player *playerPtr) {
     for(auto& p : this->occupiedPositions)
         if(p == playerPtr)
             p = nullptr;

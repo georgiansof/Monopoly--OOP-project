@@ -18,7 +18,7 @@ ResourceManager::~ResourceManager() {
     fonts.clear();
 }
 
-const Texture & ResourceManager::addTexture(const std::string &name, const string & path) {
+[[maybe_unused]] const Texture & ResourceManager::addTexture(const std::string &name, const string & path) {
     auto textureMapPair = new pair<string, Texture>;
     textureMapPair->first = string(name);
     if(!textureMapPair->second.loadFromFile(path))
@@ -30,7 +30,7 @@ const Texture & ResourceManager::addTexture(const std::string &name, const strin
         throw InsertionFailureException(name);
 }
 
-const SoundBuffer & ResourceManager::addAudio(const string& name, const string & path) {
+[[maybe_unused]] const SoundBuffer & ResourceManager::addAudio(const string& name, const string & path) {
     auto audioMapPair = new pair<string, SoundBuffer>;
     audioMapPair->first = string(name);
     if(!audioMapPair->second.loadFromFile(path))
@@ -43,7 +43,7 @@ const SoundBuffer & ResourceManager::addAudio(const string& name, const string &
 
 }
 
-const Texture & ResourceManager::getTexture(const std::string &name) const {
+[[maybe_unused]] const Texture & ResourceManager::getTexture(const std::string &name) const {
     auto searchedTextureIterator = textures.find(name);
     if (searchedTextureIterator != textures.end())
         return searchedTextureIterator->second;
@@ -51,7 +51,7 @@ const Texture & ResourceManager::getTexture(const std::string &name) const {
         throw TextureNotFoundException(name);
 }
 
-const SoundBuffer & ResourceManager::getAudio(const std::string& name) const {
+[[maybe_unused]] const SoundBuffer & ResourceManager::getAudio(const std::string& name) const {
     auto searchedAudioIterator = audios.find(string(name));
     if(searchedAudioIterator != audios.end())
         return searchedAudioIterator->second;
@@ -75,7 +75,7 @@ ostream& operator<< (ostream & os, const ResourceManager & resourceManager) noex
     return os;
 }
 
-const sf::Font & ResourceManager::addFont(const std::string& name, const std::string & path) {
+[[maybe_unused]] const sf::Font & ResourceManager::addFont(const std::string& name, const std::string & path) {
     auto fontMapPair = new pair<string, Font>;
     fontMapPair->first = string(name);
     if(!fontMapPair->second.loadFromFile(path))
@@ -87,7 +87,7 @@ const sf::Font & ResourceManager::addFont(const std::string& name, const std::st
         throw InsertionFailureException(name);
 }
 
-const Font & ResourceManager::getFont(const std::string& name) const {
+[[maybe_unused]] const Font & ResourceManager::getFont(const std::string& name) const {
     auto searchedFontIterator = fonts.find(string(name));
     if (searchedFontIterator != fonts.end())
         return searchedFontIterator->second;
