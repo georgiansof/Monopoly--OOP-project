@@ -89,6 +89,6 @@ public:
 #define ERROR_SHOWTIME 5.0f
 
 #define ALL_CONNECTED_MSG "allconnect"
-#define MAX_TCP_MESSAGE_SIZE 128
+#define MAX_TCP_MESSAGE_SIZE 1024
 
 #endif //OOP_CONSTANTS_HPP

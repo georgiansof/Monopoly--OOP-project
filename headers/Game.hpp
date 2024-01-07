@@ -5,10 +5,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
-//#include "external/SDL2/SDL.h"
-//#include "external/SDL2/SDL_net.h"
+//#include <SDL2/SDL.h>
+//#include <SDL2/SDL_net.h>
+#include "external/SDL2/SDL.h"
+#include "external/SDL2/SDL_net.h"
 
 #ifdef __linux__
 #include <X11/Xlib.h>
@@ -126,7 +126,7 @@ public:
     friend std::ostream& operator<< (std::ostream& os, Game& game); /// prints game details
 
     void eventKeyPressed(sf::Keyboard::Key keycode);
-    void eventKeyReleased(sf::Keyboard::Key keycode);
+    static void eventKeyReleased(sf::Keyboard::Key keycode);
     void eventWindowResized(sf::Vector2u windowSizeOld);
     void eventMousePressed(sf::Mouse::Button click, sf::Vector2i position);
     void eventTextEntered(char chr);

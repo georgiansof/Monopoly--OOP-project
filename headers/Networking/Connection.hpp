@@ -4,10 +4,10 @@
 #include <map>
 #include <vector>
 #include <string>
-//#include "../../headers/external/SDL2/SDL.h"
-//#include "../../headers/external/SDL2/SDL_net.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
+#include "../../headers/external/SDL2/SDL.h"
+#include "../../headers/external/SDL2/SDL_net.h"
+//#include <SDL2/SDL.h>
+//#include <SDL2/SDL_net.h>
 #include <thread>
 #include "../../constants.hpp"
 

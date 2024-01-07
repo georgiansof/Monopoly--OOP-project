@@ -10,7 +10,6 @@
 /**--------------------------------------------------**/
 
 sf::Font* Globals::defaultFont = nullptr;
-bool Globals::capsLock = false;
 bool Globals::repeatKeyPressed = false;
 
 Game* Game::instance = nullptr;

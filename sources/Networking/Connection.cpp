@@ -99,8 +99,8 @@ ConnectionToClient::ConnectionToClient(int port) {
     connectThread = new std::thread(AwaitClientWrapper, this);
 
     auto result = threads.insert(std::make_pair(port, connectThread));
-    //if(result.second == false)
-        ///throw ...
+    if(!result.second)
+        throw std::runtime_error("Connection to client failed");
 }
 
 void ConnectionToClient::AwaitHandshake() {

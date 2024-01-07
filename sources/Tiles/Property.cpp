@@ -22,7 +22,7 @@ void Property::offerFromBank(Player *plyr) {
         buy = plyr->promptVisitorBuy(this);
 
     if(!buy) {
-        Game::getInstancePtr()->propertyLicitation(this);
+        //Game::getInstancePtr()->propertyLicitation(this);
         return;
     }
     /// else player bought station

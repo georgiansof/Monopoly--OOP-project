@@ -19,16 +19,16 @@ private:
     friend Game;
 public:
     [[maybe_unused]] sf::Sprite & addSprite(const std::string & name, const sf::Texture & texture);
-    [[maybe_unused]] sf::Sprite & addSprite(const std::string & name, const sf::Sprite * spritePtr);
+    //[[maybe_unused]] sf::Sprite & addSprite(const std::string & name, const sf::Sprite * spritePtr);
 
     [[maybe_unused]] sf::Shape & addShape(const std::string & name, sf::Shape * shapePtr);
 
     [[maybe_unused]] sf::Sound & addSound(const std::string& name, const sf::SoundBuffer & audio);
-    [[maybe_unused]] sf::Sound & addSound(const std::string& name, sf::Sound * soundPtr);
+    //[[maybe_unused]] sf::Sound & addSound(const std::string& name, sf::Sound * soundPtr);
 
     [[maybe_unused]] sf::Sprite & getSpriteReference(const std::string& name);
-    [[maybe_unused]] sf::Sound & getSoundReference(const std::string& name);
-    [[maybe_unused]] sf::Shape & getShapeReference(const std::string& name);
+    //[[maybe_unused]] sf::Sound & getSoundReference(const std::string& name);
+    //[[maybe_unused]] sf::Shape & getShapeReference(const std::string& name);
     friend std::ostream& operator<< (std::ostream & os, const SceneManager & sceneManager) noexcept;
 };
 

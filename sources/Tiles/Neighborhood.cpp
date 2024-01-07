@@ -42,8 +42,11 @@ Neighborhood::Neighborhood(std::string & name, sf::Color color, unsigned short b
                     1.0f - borderSize - propertyHouseOffsetY,
                     borderSize + bigTileSize + normalTileSize * ((float)boardPosition - 31) + propertyHouseOffsetX[y_ind]
             );
+
+    addHouse(); /// warning dodge
+    cout<<houseLevel<<rentPrice[0]<<"warn dodge\n";
 }
-Neighborhood::Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice)
+/*Neighborhood::Neighborhood(const char* name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice)
         : Property(name, Property::Type::NEIGHBORHOOD, boardPosition, price), color(color) {
     houseLevel = 0;
 
@@ -74,7 +77,7 @@ Neighborhood::Neighborhood(const char* name, sf::Color color, unsigned short boa
                     1.0f - borderSize - propertyHouseOffsetY,
                     borderSize + bigTileSize + normalTileSize * ((float)boardPosition - 31) + propertyHouseOffsetX[y_ind]
             );
-}
+}*/
 
 void Neighborhood::onVisit(Player *plyr) {
     if(this->owner != nullptr) {

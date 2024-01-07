@@ -140,6 +140,7 @@ add_executable(${PROJECT_NAME} main.cpp
         sources/Tiles/Factory.cpp
         sources/Tiles/TaxTile.cpp
         sources/Tiles/ParkTile.cpp
+        sources/Game_events.cpp
 )
 
 ###############################################################################
@@ -182,7 +183,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/inc
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL2_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio sfml-window sfml-system sfml-main atomic SDL2 SDL2_net Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio sfml-window sfml-system sfml-main atomic ${PROJECT_SOURCE_DIR}/SDL2.dll ${PROJECT_SOURCE_DIR}/SDL2_net.dll Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)
