@@ -82,15 +82,14 @@ FetchContent_Declare(
   GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 )
 
-#FetchContent_Declare(
-#    SDL
-#    GIT_REPOSITORY  https://github.com/libsdl-org/SDL.git
-#    GIT_TAG         release-2.28.5
-#    GIT_SHALLOW
-#)
+FetchContent_Declare(
+    SDL2
+    GIT_REPOSITORY  https://github.com/libsdl-org/SDL.git
+    GIT_TAG         release-2.28.5
+)
 
 FetchContent_MakeAvailable(SFML)
-#FetchContent_MakeAvailable(SDL)
+FetchContent_MakeAvailable(SDL2)
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 else()
@@ -98,8 +97,8 @@ else()
     set_custom_stdlib_and_sanitizers(sfml-window false)
     set_custom_stdlib_and_sanitizers(sfml-graphics false)
     set_custom_stdlib_and_sanitizers(sfml-audio false)
-    #set_custom_stdlib_and_sanitizers(SDL2 false)
-    #set_custom_stdlib_and_sanitizers(SDL2_net false)
+    set_custom_stdlib_and_sanitizers(SDL2 false)
+    set_custom_stdlib_and_sanitizers(SDL2_net false)
 endif()
 
 # set_property(TARGET sfml-system PROPERTY CXX_STANDARD 17)
@@ -137,6 +136,10 @@ add_executable(${PROJECT_NAME} main.cpp
         sources/UI/Label.cpp
         sources/UI/TextEntry.cpp
         sources/Networking/Connection.cpp
+        sources/Tiles/TrainStation.cpp
+        sources/Tiles/Factory.cpp
+        sources/Tiles/TaxTile.cpp
+        sources/Tiles/ParkTile.cpp
 )
 
 ###############################################################################
@@ -176,9 +179,10 @@ set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 # use SYSTEM so clang-tidy does not report warnings from these directories
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL2_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio sfml-window sfml-system sfml-main ${CMAKE_SOURCE_DIR}/SDL2.dll ${CMAKE_SOURCE_DIR}/SDL2_net.dll Threads::Threads )
+target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_BINARY_DIR}/lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio sfml-window sfml-system sfml-main atomic SDL2 SDL2_net Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)

@@ -64,11 +64,11 @@ void Button::draw(sf::RenderWindow *window) {
 }
 
 void Button::onClick(sf::Mouse::Button click) {
-    if(!this->invisible)
+    if(!this->invisible && click == sf::Mouse::Button::Left)
         (*this->action)();
 }
 
-void Button::setText(const std::string& textstr) {
+[[maybe_unused]] void Button::setText(const std::string& textstr) {
     this->text.setString(textstr);
 }
 

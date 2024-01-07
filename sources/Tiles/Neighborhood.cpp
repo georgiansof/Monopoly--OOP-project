@@ -10,6 +10,8 @@ float normalTileSize = 0.08;
 float bigTileSize = 0.13;
 float borderSize = 0.01;
 
+using namespace std;
+
 Neighborhood::Neighborhood(std::string & name, sf::Color color, unsigned short boardPosition, unsigned int price, const uint32_t *rentPrice)
         : Property(name, Property::Type::NEIGHBORHOOD, boardPosition, price), color(color) {
     houseLevel = 0;
@@ -72,4 +74,45 @@ Neighborhood::Neighborhood(const char* name, sf::Color color, unsigned short boa
                     1.0f - borderSize - propertyHouseOffsetY,
                     borderSize + bigTileSize + normalTileSize * ((float)boardPosition - 31) + propertyHouseOffsetX[y_ind]
             );
+}
+
+void Neighborhood::onVisit(Player *plyr) {
+    if(this->owner != nullptr) {
+        auto playerOwnsNeighbds = plyr->getTilesOwnedOfType<Neighborhood>();
+        int sameColorCount = 0;
+        for(auto ngb : playerOwnsNeighbds)
+            if(this->color == ngb->color)
+                ++sameColorCount;
+
+        bool doubleRent = false;
+        if(sameColorCount == 3
+        || (sameColorCount == 2 && this->isSmallNeighborHood()))
+            doubleRent = true;
+
+        uint32_t fee = rentPrice[houseLevel];
+        if(houseLevel == 0 && doubleRent)
+            fee *= 2;
+
+        bool successfulPayment = plyr->payTo(owner, fee);
+        if(!successfulPayment) {
+            plyr->waitToPay(owner, fee); /// TODO payment
+            cout<<"Current player has to sell because of insufficient balance!\n";
+        }
+        return;
+    }
+    /// else if not owned
+    Property::offerFromBank(plyr);
+}
+
+bool Neighborhood::isSmallNeighborHood() const {
+    if(this->name == "Rahova"
+    || this->name == "Giulesti"
+    || this->name == "Primaverii"
+    || this->name == "Magheru")
+        return true;
+    return false;
+}
+
+[[maybe_unused]] void Neighborhood::addHouse() {
+    cout<<housePositions[1].x; /// warning dodge, to be implemented
 }

@@ -1,11 +1,13 @@
-#ifndef __SOCKETS_H
-#define __SOCKETS_H
+#ifndef OOP_CONNECTION_HPP
+#define OOP_CONNECTION_HPP
 
 #include <map>
 #include <vector>
 #include <string>
-#include "../../headers/external/SDL2/SDL.h"
-#include "../../headers/external/SDL2/SDL_net.h"
+//#include "../../headers/external/SDL2/SDL.h"
+//#include "../../headers/external/SDL2/SDL_net.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_net.h>
 #include <thread>
 #include "../../constants.hpp"
 
@@ -16,13 +18,12 @@ protected:
     static int count;
     static std::map<int, std::thread*> threads;
     TCPsocket remote;
-    int port;
+    int port = 0;
     std::string remote_name; /// first receive after accept
 public:
-    Connection() = default;
     virtual ~Connection();
     std::string Receive(float timeout = DEFAULT_TIMEOUT, int MAXLEN = 1024);
-    void Send(std::string text);
+    int Send(std::string text);
     static int getConnectionCount();
     [[nodiscard]] int getPort() const;
     [[nodiscard]] std::string getPeerName() const;
@@ -30,17 +31,17 @@ public:
 
 class ConnectionToServer : public Connection {
 public:
-    ConnectionToServer(std::string address, int port, std::string self_name, int MAXREQ = 1024);
+    ConnectionToServer(std::string address, int port, std::string self_name);
 };
 
 class ConnectionToClient : public Connection {
 private:
     TCPsocket local;
-    std::thread *connectThread = 0;
-    std::thread *listenerThread = 0;
+    std::thread *connectThread = nullptr;
+    //std::thread *listenerThread = nullptr;
 public:
-    ConnectionToClient(int port);
-    ~ConnectionToClient();
+    explicit ConnectionToClient(int port);
+    ~ConnectionToClient() override;
     void AwaitClient();
     void AwaitHandshake();
     std::string getPeerAddress();

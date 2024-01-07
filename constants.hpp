@@ -10,21 +10,19 @@
 
 class Globals {
     static sf::Font *defaultFont;
-    static bool capsLock;
     static bool repeatKeyPressed;
+    static const std::string bankCStr;
 public:
+    static const std::string * getBankStrPtr() {
+        return &bankCStr;
+    }
     static void setDefaultFont(const sf::Font *font) {
         defaultFont = const_cast<sf::Font*> (font);
     }
     static const sf::Font& getDefaultFont() {
         return *defaultFont;
     }
-    static void switchCaps() {
-        capsLock = !capsLock;
-    }
-    static bool isCapsLockPressed() {
-        return capsLock;
-    }
+
     static bool doesKeyPressedRepeat() {
         return repeatKeyPressed;
     }
@@ -59,7 +57,6 @@ public:
 #define SWITCH_CASE_NOT_COVERED_ERROR_CODE (-11)
 #define CONNECTION_TIMED_OUT_ERROR_CODE (-12)
 #define NAME_TAKEN_ERROR_CODE (-13)
-#define GAME_DESYNC_ERROR_CODE (-14)
 
 #define DICE_SIZE_X 0.1
 #define DICE_SIZE_Y 0.1
@@ -74,6 +71,7 @@ public:
 #define MONEY_FROM_START 200
 #define JAIL_FEE 50
 #define JAIL_TILE_POSITION 10
+#define LICITATION_TIMEOUT 10.0f
 
 #define OUTLINE_THICKNESS_DEFAULT 3.0f
 #define FONTSIZE_DEFAULT 15
@@ -91,5 +89,6 @@ public:
 #define ERROR_SHOWTIME 5.0f
 
 #define ALL_CONNECTED_MSG "allconnect"
+#define MAX_TCP_MESSAGE_SIZE 128
 
 #endif //OOP_CONSTANTS_HPP

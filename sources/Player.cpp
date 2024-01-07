@@ -1,8 +1,25 @@
 #include "../headers/Player.hpp"
 #include "../headers/Game.hpp"
+#include "../headers/Tiles/BoardTile.hpp"
+#include "../headers/UI/Button.hpp"
 
 using namespace std;
 using namespace sf;
+
+volatile bool Player::buyOrPassPressed = false;
+volatile bool Player::buying = false;
+
+bool Player::payTo(Player *toWho, uint32_t amount) {
+    if(this->money > amount) {
+        this->money -= amount;
+        toWho += amount;
+        Game::getInstancePtr()->updateMoneyLabel();
+        std::cout << this->name << " paid " << amount << " to " << toWho->name << '\n';
+        return true;
+    }
+
+    return false;
+}
 
 pair<uint16_t,bool> Player::incrementPosition(int amount) noexcept {
     this->boardPosition += amount;
@@ -118,18 +135,21 @@ Player::~Player() {
 void Player::moveSpaces(int amount) {
     Game *game = Game::getInstancePtr();
     Board *board = game->getBoardPtr();
-    if(!this->inJail)
+    if (!this->inJail)
         board->getTile(this->getBoardPosition()).removePlayer(this->getIndexInsideTile());
     else
-        dynamic_cast<Jail&> (board->getTile(this->getBoardPosition())).removePlayerFromJail(this);
+        dynamic_cast<Jail &> (board->getTile(this->getBoardPosition())).removePlayerFromJail(this);
     auto updatedPosition = this->incrementPosition(amount);
     auto newPositionInsideTile = board->getTile(updatedPosition.first).addPlayer(this);
     this->indexInsideTile = newPositionInsideTile.second;
     newPositionInsideTile.first.x *= (float) game->getWindowSize().x;
     newPositionInsideTile.first.y *= (float) game->getWindowSize().y;
     this->boardPieceShapePtr->setPosition(newPositionInsideTile.first);
-    if(updatedPosition.second) /// went through start
+    if (updatedPosition.second) {/// went through start
         this->money += MONEY_FROM_START;
+        game->updateMoneyLabel();
+    }
+
 }
 
 void Player::sendToJail() {
@@ -165,4 +185,125 @@ bool Player::isInJail() const noexcept {
 
 const std::string& Player::getColorName() const noexcept {
     return this->colorName;
+}
+
+uint32_t PlayerEconomy::getAvailableMoney() const noexcept {
+    return this->money;
+}
+
+void Player::setBuyOrPassPressed(bool val) {
+    buyOrPassPressed = val;
+}
+
+void Player::setBuying(bool val) {
+    buying = val;
+}
+
+void Player::addOwnedProperty(Property *prop) {
+    ownedProperties.push_back(prop);
+    ///TODO add to UI
+}
+
+void Player::waitToPay(Player *toWho, uint32_t amount) {
+    std::cout<<"Waiting for " << this->name << " to pay " << amount;
+    if(toWho == nullptr)
+        cout << " to bank\n";
+    else
+        cout << " to " << toWho->getName() << '\n';
+    while(this->money < amount)
+        continue;
+
+    this->money -= amount;
+    if(toWho != nullptr)
+        toWho->money += amount;
+
+    Game::getInstancePtr()->updateMoneyLabel();
+    std::cout<<"Debt paid by "<<this->name<<'\n';
+}
+
+void Player::payToBank(uint32_t amount) {
+    if(this->money >= amount) {
+        this->money -= amount;
+        Game::getInstancePtr()->updateMoneyLabel();
+        std::cout << this->name << " has paid " << amount << " to bank\n";
+    }
+    else
+        cerr << "PLAYER HAS NOT ENOUGH MONEY TO PAY TO BANK!\n";
+}
+
+void Player::buyButtonAction() {
+    buyOrPassPressed = true;
+    buying = true;
+}
+
+void Player::passButtonAction() {
+    buyOrPassPressed = true;
+    buying = false;
+}
+
+bool Player::promptVisitorBuy(Property *prop) {
+    Game *game = Game::getInstancePtr();
+
+    if(this->name == game->getHostName()) {
+
+        std::string buyButtonString = "Buy for " + to_string(prop->getPrice()) + "M";
+
+        auto *buyButton = new Button(
+                buyButtonString,
+                {0.2f, 0.5f},
+                {0.1f, 0.05f},
+                sf::Color::Yellow,
+                sf::Color::Blue,
+                OUTLINE_THICKNESS_DEFAULT,
+                sf::Color::Green,
+                sf::Text::Style::Regular,
+                FONTSIZE_DEFAULT,
+                &buyButtonAction
+        );
+        auto *passButton = new Button(
+                "Pass",
+                {0.35f, 0.5f},
+                {0.1f, 0.05f},
+                sf::Color::Yellow,
+                sf::Color::Blue,
+                OUTLINE_THICKNESS_DEFAULT,
+                sf::Color::Green,
+                sf::Text::Style::Regular,
+                FONTSIZE_DEFAULT,
+                &passButtonAction
+        );
+
+        game->getuiManagerPtr()->addElement("buy_button", buyButton);
+        game->getuiManagerPtr()->addElement("pass_button", passButton);
+
+        while (!buyOrPassPressed)
+            continue;
+
+        buyOrPassPressed = false;
+        game->getuiManagerPtr()->removeElement("buy_button");
+        game->getuiManagerPtr()->removeElement("pass_button");
+        if(buying) {
+            buying = false;
+            game->broadcast("buy yes");
+            return true;
+        }
+        game->broadcast("buy no");
+        return false;
+    }
+    else { /// waiting for decision
+        cout << "Waiting for " << (*game->getCurrentPlayerIterator())->getName()
+             << " to decide \n";
+        while(!buyOrPassPressed)
+            continue;
+        buyOrPassPressed = false;
+
+        cout << (*game->getCurrentPlayerIterator())->getName() << " decided to "
+             << (buying ? "" : "not") << " buy" << '\n';
+
+        if(buying) {
+            buying = false;
+            return true;
+        }
+        return false;
+    }
 }

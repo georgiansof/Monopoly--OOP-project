@@ -90,7 +90,7 @@ BoardTile::BoardTile(uint16_t boardPosition, BoardTile::Type type)
         case JAIL:
         {
             for(int i = 0; i < 8; ++i)
-                playerPositions[i] = jailOutsidePlayerPositions[i];
+                playerPositions[i] = {jailOutsidePlayerPositions[i].x, 1.0f - jailOutsidePlayerPositions[i].y};
 
             break;
         }

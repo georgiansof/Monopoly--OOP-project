@@ -1,6 +1,9 @@
 #include "../../headers/Managers/UIManager.hpp"
 #include <iostream>
 #include "../../headers/DataStructures/CustomExceptions.hpp"
+#include "../../headers/Game.hpp"
+
+using namespace std;
 
 UIManager::~UIManager() {
     delete dice1;
@@ -8,7 +11,7 @@ UIManager::~UIManager() {
     for(auto &elem : elements)
         delete elem.second;
     elements.clear();
-};
+}
 
 void UIManager::addElement(const std::string& name, UIElement *elem) {
     this->elements.insert(make_pair(name,elem));
@@ -31,9 +34,9 @@ void UIManager::createDices(ResourceManager *resourceManager) {
 }
 
 void UIManager::hideDices() {dice1->hide(); dice2->hide();}
-void UIManager::unhideDices() {dice1->unhide(); dice2->unhide();}
+[[maybe_unused]] void UIManager::unhideDices() {dice1->unhide(); dice2->unhide();}
 
-void UIManager::hideElement(const std::string& name) {
+[[maybe_unused]] void UIManager::hideElement(const std::string& name) {
     auto find = elements.find(name);
     if(find == elements.end())
         throw SceneObjectNotFoundException(name);
@@ -41,7 +44,7 @@ void UIManager::hideElement(const std::string& name) {
     find->second->hide();
 }
 
-void UIManager::unhideElement(const std::string& name) {
+[[maybe_unused]] void UIManager::unhideElement(const std::string& name) {
     auto find = elements.find(name);
     if(find == elements.end())
         throw SceneObjectNotFoundException(name);
@@ -49,14 +52,21 @@ void UIManager::unhideElement(const std::string& name) {
     find->second->unhide();
 }
 
-void UIManager::hideElement(UIElement *elem) {elem->hide();}
-void UIManager::unhideElement(UIElement *elem) {elem->unhide();}
+[[maybe_unused]] void UIManager::hideElement(UIElement *elem) {elem->hide();}
+[[maybe_unused]] void UIManager::unhideElement(UIElement *elem) {elem->unhide();}
 
-void UIManager::temporarilyShow(UIElement *elem, float seconds) {
+[[maybe_unused]] void UIManager::temporarilyShow(UIElement *elem, float seconds) {
     elem->showForSeconds(seconds);
 }
 
-void UIManager::temporarilyShow(const std::string &name, float seconds) {
+void UIManager::removeElement(const std::string &name) {
+    UIElement *elem = getElement(name);
+    delete elem;
+    elements.erase(name);
+}
+
+
+[[maybe_unused]] void UIManager::temporarilyShow(const std::string &name, float seconds) {
     auto find = elements.find(name);
     if(find == elements.end())
         throw SceneObjectNotFoundException(name);
@@ -70,4 +80,11 @@ UIElement * UIManager::getElement(const std::string &name) {
         return nullptr;
     else
         return result->second;
+}
+
+void UIManager::updateMoneyLabel() {
+    Game *game = Game::getInstancePtr();
+    Label *lbl = dynamic_cast<Label*> (
+            getElement("host_money"));
+    lbl->setText("Your money: " + to_string(game->getPlayerByName(game->getHostName())->getAvailableMoney()) + "M");
 }

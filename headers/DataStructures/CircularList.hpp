@@ -25,6 +25,11 @@ public:
                  : it(_it), circularListPtr(_circularListPtr) {}
         //void operator++(int); /// clang-tidy conflict if returning const iterator copy
 
+        iterator(const iterator& other) {
+            this->it = other.it;
+            this->circularListPtr = other.circularListPtr;
+        }
+
         iterator& operator++() {
             ++this->it;
             if(this->it == circularListPtr->list.end())
@@ -54,7 +59,7 @@ public:
         list.push_back(value);
     }
 
-    void removeElement(CircularList<type_t>::iterator &it) {
+    [[maybe_unused]] void removeElement(CircularList<type_t>::iterator &it) {
         typename std::list<type_t>::iterator l_it = it.it;
         ++it;
         this->list.erase(l_it);

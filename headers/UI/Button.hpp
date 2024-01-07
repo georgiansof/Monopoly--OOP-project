@@ -38,7 +38,7 @@ public:
     void draw(sf::RenderWindow *window) override;
     void onClick(sf::Mouse::Button click) override;
     void setPosition(const sf::Vector2f& position) override;
-    void setText(const std::string& textstr);
+    [[maybe_unused]] void setText(const std::string& textstr);
 };
 
 

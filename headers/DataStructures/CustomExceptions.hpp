@@ -34,13 +34,13 @@ public:
     [[nodiscard]] int getExitCode() const noexcept {return exit_code;}
 };
 
-class GameDesynchronizedException : public FatalException {
+/*class GameDesynchronizedException : public FatalException {
 public:
     explicit GameDesynchronizedException(int exit_code = GAME_DESYNC_ERROR_CODE) : FatalException(exit_code) {}
     [[nodiscard]] const char* what() const noexcept override {
         return "Game has been desynchronized!\n";
     }
-};
+};*/
 
 class NameTakenException : public FatalException {
 public:
@@ -82,7 +82,7 @@ private:
     std::string path;
 public:
     FileNotFoundException() = delete;
-    explicit FileNotFoundException(const char* path) : FatalException(FILE_MISS_ERROR_CODE), path(path) {}
+    [[maybe_unused]] explicit FileNotFoundException(const char* path) : FatalException(FILE_MISS_ERROR_CODE), path(path) {}
     explicit FileNotFoundException(std::string path) : FatalException(FILE_MISS_ERROR_CODE), path(std::move(path)) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("File at ") + path + std::string(" not found or inaccesible !");
@@ -96,7 +96,7 @@ private:
 public:
     InsertionFailureException() = delete;
     explicit InsertionFailureException(std::string name) : FatalException(INSERTION_FAILURE_ERROR_CODE), name(std::move(name)) {}
-    explicit InsertionFailureException(const char* name) : FatalException(INSERTION_FAILURE_ERROR_CODE), name(name) {}
+    [[maybe_unused]] explicit InsertionFailureException(const char* name) : FatalException(INSERTION_FAILURE_ERROR_CODE), name(name) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Insertion of ") + std::string(name) + std::string(" did not take place.");
         return ret.c_str();
@@ -120,7 +120,7 @@ public:
 class TextureNotFoundException : public AssetNotFoundException {
 public:
     TextureNotFoundException() = delete;
-    explicit TextureNotFoundException(const char *textureName) : AssetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
+    [[maybe_unused]] explicit TextureNotFoundException(const char *textureName) : AssetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
     explicit TextureNotFoundException(const std::string & textureName) : AssetNotFoundException(textureName, TEXTURE_MISS_ERROR_CODE) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Texture with name ") + assetName + std::string(" not found during getter call.");
@@ -131,7 +131,7 @@ public:
 class AudioNotFoundException : public AssetNotFoundException {
 public:
     AudioNotFoundException() = delete;
-    explicit AudioNotFoundException(const char *audioName) : AssetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
+    [[maybe_unused]] explicit AudioNotFoundException(const char *audioName) : AssetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
     explicit AudioNotFoundException(const std::string & audioName) : AssetNotFoundException(audioName, AUDIO_MISS_ERROR_CODE) {}
     [[nodiscard]] const char* what() const noexcept override {
         static std::string ret = std::string("Audio with name ") + assetName + std::string(" not found during getter call.");
@@ -149,7 +149,7 @@ public:
     SceneAddFailureException() = delete;
     explicit SceneAddFailureException(std::string objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
         : FatalException(error_code), type(type), objectName(std::move(objectName)) {}
-    explicit SceneAddFailureException(const char* objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
+    [[maybe_unused]] explicit SceneAddFailureException(const char* objectName, Type type = GENERIC, int error_code = SCENE_ADD_FAIL_ERROR_CODE)
         : FatalException(error_code), type(type), objectName(objectName) {}
 
     [[nodiscard]] const char* what() const noexcept override {
@@ -182,7 +182,7 @@ public:
     SceneObjectNotFoundException() = delete;
     explicit SceneObjectNotFoundException(std::string objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
             : FatalException(error_code), type(type), objectName(std::move(objectName)) {}
-    explicit SceneObjectNotFoundException(const char* objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
+    [[maybe_unused]] explicit SceneObjectNotFoundException(const char* objectName, Type type = GENERIC, int error_code = SCENE_OBJECT_MISS_ERROR_CODE)
             : FatalException(error_code), type(type), objectName(objectName) {}
 
     [[nodiscard]] const char* what() const noexcept override {

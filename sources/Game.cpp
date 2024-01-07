@@ -12,6 +12,8 @@ using json = nlohmann::json;
 using namespace sf;
 using namespace std;
 
+const std::string Globals::bankCStr = "bank";
+
 void Game::AwaitHandshakeAsync(ConnectionToClient *context) {
     context->AwaitHandshake();
     std::cout<< "Port " << context->getPort()<< " connected to " << context->getPeerName() << '\n';
@@ -25,10 +27,10 @@ void Game::AwaitHandshakeAsync(ConnectionToClient *context) {
                                     + "\n");
 }
 
-void Game::connectToServer(std::string ip, int port, std::string hostname) {
+void Game::connectToServer(const std::string& ip, int port, std::string _hostname) {
     std::cout << ip << ' ' << port << '\n';
 
-    connectionToServer = new ConnectionToServer(ip, port, hostname);
+    connectionToServer = new ConnectionToServer(ip, port, std::move(_hostname));
     //srv->Send("Client closing connection\n");
 
     //delete srv;
@@ -47,9 +49,9 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
     for(int i = 0; i < numberOfPlayers; ++i)
         threads.push_back(new std::thread(Game::AwaitHandshakeAsync, connectionsToClients[i]));
 
-    for(int i = 0; i < threads.size(); ++i) {
-        threads[i]->join();
-        delete threads[i];
+    for(auto thread : threads) {
+        thread->join();
+        delete thread;
     }
 
     threads.clear();
@@ -85,10 +87,16 @@ void Game::waitForClients(int startPort, int numberOfPlayers) {
 
 void Game::serverListenToClient(ConnectionToClient *connection) {
     std::string recv = connection->Receive(NO_TIMEOUT);
-    eventServerReceivedInput(recv, connection);
+
+    auto thrd = new thread([this, recv, connection]() {
+        this->eventServerReceivedInput(recv, connection);
+    });
+
     (new thread([this, connection]() {
         this->serverListenToClient(connection);
     }))->detach(); /// loop the listening without filling the stack
+
+    thrd->join(); /// async, but avoiding thread explosion
 }
 
 void Game::promptConnectionDetails() {
@@ -504,15 +512,15 @@ CircularList<Player*>::iterator& Game::getCurrentPlayerIterator() {
     return this->currentPlayerIterator;
 }
 
-Game::host_type Game::getHostType() const noexcept {
+[[maybe_unused]] Game::host_type Game::getHostType() const noexcept {
     return this->hostType;
 }
 
-ConnectionToServer* Game::getConnectionToServer() {
+[[maybe_unused]] ConnectionToServer* Game::getConnectionToServer() {
     return this->connectionToServer;
 }
 
-vector<ConnectionToClient*>& Game::getConnectionsToClients() {
+[[maybe_unused]] vector<ConnectionToClient*>& Game::getConnectionsToClients() {
     return this->connectionsToClients;
 }
 
@@ -528,7 +536,8 @@ void Game::eventTextEntered(char chr) {
 }
 
 void Game::eventKeyReleased(sf::Keyboard::Key keycode) {
-
+    Game *game = this;
+    std::cout<<keycode;
 }
 
 void Game::eventWindowResized(sf::Vector2u windowSizeOld) {
@@ -543,24 +552,31 @@ void Game::eventMousePressed(sf::Mouse::Button click, sf::Vector2i position) {
     bool objectOnTopPressed = false;
     if(click == sf::Mouse::Button::Left) {
         if(uiManager.dice1->contains(this->coordinatesToPercentage(Vector2f(position))))
-            uiManager.dice1->onClick(click);
+            (new thread([this, click]() {
+                this->uiManager.dice1->onClick(click);
+            }))->detach();
         else
             if(uiManager.dice2->contains(this->coordinatesToPercentage(Vector2f(position))))
-                uiManager.dice2->onClick(click);
+                (new thread([this, click]() {
+                    this->uiManager.dice2->onClick(click);
+                }))->detach();
 
         for (auto &uiElem: uiManager.elements) {
-            if (!uiElem.second->isInvisible() &&
-                uiElem.second->contains(this->coordinatesToPercentage(Vector2f(position)))) {
-                if (!objectOnTopPressed) {
-                    (new thread([uiElem, click]() {
-                        uiElem.second->onClick(click);
-                    }))->detach();
-                    objectOnTopPressed = true;
+            if(uiElem.second != nullptr) {
+                if (!uiElem.second->isInvisible() &&
+                    uiElem.second->contains(this->coordinatesToPercentage(Vector2f(position)))) {
+                    if (!objectOnTopPressed) {
+                        (new thread([uiElem, click]() {
+                            uiElem.second->onClick(click);
+                        }))->detach();
+                        objectOnTopPressed = true;
+                    }
+                } else {
+                    if(dynamic_cast<TextEntry*> (uiElem.second))
+                        (new thread([uiElem, click]() {
+                            uiElem.second->onClickOutside(click);
+                        }))->detach();
                 }
-            } else {
-                (new thread([uiElem, click]() {
-                    uiElem.second->onClickOutside(click);
-                }))->detach();
             }
         }
     }
@@ -571,7 +587,7 @@ Game::Game() {
     this->details = "MonOOPoly game by georgiansof";
 }
 
-const sf::Font& Game::getDefaultFont() const {
+[[maybe_unused]] const sf::Font& Game::getDefaultFont() const {
     if(defaultFont)
         return *defaultFont;
     else
@@ -655,7 +671,7 @@ ResourceManager* Game::getResourceManagerPtr() noexcept {
     return &resourceManager;
 }
 
-SceneManager* Game::getSceneManagerPtr() noexcept {
+[[maybe_unused]] SceneManager* Game::getSceneManagerPtr() noexcept {
     return &sceneManager;
 }
 
@@ -697,6 +713,10 @@ void Game::draw() {
 
 sf::Vector2<unsigned int> Game::getWindowSize() const {
     return window.getSize();
+}
+
+bool Game::isDiceRollingLocked() const {
+    return lockDiceRoll;
 }
 
 void Game::addTiles() {
@@ -884,12 +904,7 @@ std::pair<uint8_t,uint8_t> Game::diceRoll() {
     std::uniform_int_distribution<uint8_t> distribution(1,6);
     uint8_t dice1 = distribution(gen);
     uint8_t dice2 = distribution(gen);
-    std::cout<<"Dices: " << int(dice1) << ' ' << int(dice2) << '\n';
     return {dice1,dice2};
-}
-
-void Game::nextPlayer() {
-    ++this->currentPlayerIterator;
 }
 
 sf::Vector2f Game::coordinatesToPercentage(sf::Vector2f coord) const {
@@ -909,7 +924,7 @@ float Game::coordinateToPercentage(float coord, Game::axis which) const {
         return coord / (float)this->getWindowSize().y;
 }
 
-float Game::percentageToCoordinate(float perc, Game::axis which) const {
+[[maybe_unused]] float Game::percentageToCoordinate(float perc, Game::axis which) const {
     if(which == Game::axis::X)
         return perc * (float)this->getWindowSize().x;
     else
@@ -922,13 +937,19 @@ Game::~Game() {
 
 void Game::clientListenToServer() {
     std::string recv = connectionToServer->Receive(NO_TIMEOUT);
-    eventClientReceivedInput(recv);
+
+    auto thrd = new thread([this,recv]() -> void {
+        this->eventClientReceivedInput(recv);
+    });
+
     (new thread([this]() {
         this->clientListenToServer();
     }))->detach(); /// recursivity without stack fill
+
+    thrd->join(); /// asynchronous thread creation to prevent deadlocks
 }
 
-void Game::clientEventAllConnected(std::string playerDetails) {
+[[maybe_unused]] void Game::clientEventAllConnected(const std::string& playerDetails) {
     this->destroyMainMenuUI();
     this->showBoard(playerDetails);
     this->window.setTitle(std::string("MonOOPoly (role CLIENT) playing as ") + this->hostname + " colored " + this->hostColorName);
@@ -947,17 +968,19 @@ int handleFatalException(exception &e) {
 }
 
 void Game::extractPlayerNames(std::vector<std::string> &playerNames, const std::string& playerDetails) {
-    char cstr[playerDetails.size() + 1];
-    strcpy(cstr, playerDetails.c_str());
-    char *p = strtok(cstr, "\n");
-    while(p) {
-        std::cout<<p<<'\n';
-        playerNames.emplace_back(std::string(p));
-        p = strtok(nullptr, "\n");
+    istringstream iss(playerDetails);
+    std::string line;
+    while(std::getline(iss, line, '\n')) {
+        std::cout << line <<'\n';
+        playerNames.emplace_back(line);
     }
 }
 
-void Game::showBoard(std::string playerDetails) {
+void Game::setFactoryWaitingDiceRoll(bool val) {
+    this->factoryWaitingDiceRoll = val;
+}
+
+void Game::showBoard(const std::string& playerDetails) {
     try {
         sceneManager.addSprite("board", resourceManager.getTexture("board"));
         sceneManager.addSound("coin flip", resourceManager.getAudio("coin flip"));
@@ -991,7 +1014,7 @@ void Game::showBoard(std::string playerDetails) {
 
         vector<std::string> playerNames;
         extractPlayerNames(playerNames, playerDetails);
-        for(int i = 0; i < playerNames.size(); ++i) {
+        for(int i = 0; i < (int)playerNames.size(); ++i) {
             auto plyr = new Player(playerNames[i], colors[i]);
             this->addPlayer(plyr);
             if(plyr->getName() == hostname)
@@ -1014,8 +1037,18 @@ void Game::showBoard(std::string playerDetails) {
             sf::Color::Yellow,
             sf::Text::Style::Italic
     );
+
+    auto hostMoney = new Label(
+                "Your money: " + to_string(getPlayerByName(hostname)->getAvailableMoney()) + "M",
+                {0.5f, 0.25f},
+                sf::Color(COLOR_ORANGE),
+                5.0f,
+                FONTSIZE_DEFAULT + 10
+            );
     uiManager.addElement("whosTurnLabel", whoAtTurnLabel);
+    uiManager.addElement("host_money", hostMoney);
 }
+
 
 bool Game::isNameTaken(const std::string &name) const {
     if(name == this->hostname)
@@ -1040,8 +1073,70 @@ const std::string &Game::getHostName() const noexcept {
     return this->hostname;
 }
 
+void Game::broadcastToClients(const std::string& msg, std::vector<std::string> except) {
+    for(auto connection : connectionsToClients)
+        if(std::find(except.begin(), except.end(), connection->getPeerName()) == except.end())
+            connection->Send(msg);
+}
+
+void Game::broadcastFromClient(const std::string &msg) {
+    connectionToServer->Send("broadcast " + msg);
+}
+
+void Game::broadcast(const std::string& msg) {
+    if(this->hostType == SERVER)
+        broadcastToClients(msg);
+    else
+        broadcastFromClient(msg);
+}
+
+void Game::makeMove(int dice1, int dice2) {
+    Player *currentPlayer = *currentPlayerIterator;
+    Label *lbl = dynamic_cast<Label*> (this->uiManager.getElement("whosTurnLabel"));
+
+    if(timesRolledDouble == 2 && dice1 == dice2) {
+        currentPlayer->sendToJail();
+        timesRolledDouble = 0;
+        ++currentPlayerIterator;
+        return;
+    }
+    currentPlayer->moveSpaces(dice1+dice2);
+    lockDiceRoll = true;
+    board.getTile(currentPlayer->getBoardPosition()).onVisit(currentPlayer);
+    lockDiceRoll = false;
+    if(dice1 == dice2)
+        ++timesRolledDouble;
+    else {
+        timesRolledDouble = 0;
+        ++currentPlayerIterator;
+    }
+
+    if(dice1 != dice2)
+        lbl->setText((*currentPlayerIterator)->getName() + "'s turn.");
+}
+
+void Game::eventDiceRolled(int dice1, int dice2) {
+    Player *currentPlayer = *currentPlayerIterator;
+    if(currentPlayer->isInJail())
+        if (dice1 != dice2) {
+            currentPlayer->incrementTimesRolledInJail();
+            if(currentPlayer->getTimesRolledInJail() != 3)
+                return;
+            else {
+                currentPlayer->money -= JAIL_FEE;
+            }
+            /// and continue making the move
+        }
+    this->makeMove(dice1,dice2);
+}
+
 void Game::eventServerReceivedInput(const std::string& input, ConnectionToClient *fromWho) {
-    if(input.starts_with("rolled ")) {
+    if(input.starts_with("rolled ")
+    || input.starts_with("buy ")
+    || input.starts_with("licitation")
+    || input.starts_with("bid")
+    || input.starts_with("fact_rolled")
+            ) {
         eventClientReceivedInput(input); /// as client
         return;
     }
@@ -1056,82 +1151,211 @@ void Game::eventServerReceivedInput(const std::string& input, ConnectionToClient
         return;
     }
 
-    if(input == "throw_desync")
-        throw GameDesynchronizedException();
 
     /// ELSE
     std::cout << "Unhandled input event from " << fromWho->getPeerName() << " with request *" << input << "*\n";
 }
 
-void Game::makeMove(int dice1, int dice2) {
-    Player *currentPlayer = *currentPlayerIterator;
-    if(timesRolledDouble == 2 && dice1 == dice2) {
-        currentPlayer->sendToJail();
-        timesRolledDouble = 0;
-        ++currentPlayerIterator;
-        Label *lbl = dynamic_cast<Label*> (this->uiManager.getElement("whosTurnLabel"));
-        lbl->setText((*currentPlayerIterator)->getName() + "'s turn.");
+void Game::submitLicitation() {
+    Game *game = Game::getInstancePtr();
+    auto *entry = dynamic_cast<TextEntry*>
+                                (game->uiManager.getElement("bid_entry"));
+    if(stoul(entry->getText()) > game->getPlayerByName(game->hostname)->getAvailableMoney()) {
+        cout << "You don't have enough money!\n";
         return;
     }
-    currentPlayer->moveSpaces(dice1+dice2);
-    if(dice1 == dice2)
-        ++timesRolledDouble;
-    else {
-        timesRolledDouble = 0;
-        ++currentPlayerIterator;
-        Label *lbl = dynamic_cast<Label*> (this->uiManager.getElement("whosTurnLabel"));
-        lbl->setText((*currentPlayerIterator)->getName() + "'s turn.");
-    }
+
+    game->broadcast("bid " + game->hostname + " " + entry->getText());
+    game->eventClientReceivedInput("bid " + game->hostname + " " + entry->getText());
+    entry->setText("");
 }
 
 void Game::eventClientReceivedInput(const std::string &input) {
+    /// if....
+    /// do...
+    /// return
+
+    if(input.starts_with("fact_rolled")) {
+        int dice1pos = (int)input.find(' ') + 1;
+        int dice2pos = (int)input.find(' ', dice1pos) + 1;
+        int dice1 = stoi(input.substr(dice1pos,1));
+        int dice2 = stoi(input.substr(dice2pos,1));
+        Factory::setDices(dice1, dice2);
+        factoryWaitingDiceRoll = false;
+        std::cout<<"rolled " << dice1 << ' ' << dice2 << " on a factory\n";
+        return;
+    }
+
     if(input.starts_with("rolled")) {
-        int namePos = input.find(' ') + 1;//input.find_first_of(' ') + 1;
-        int dice1Pos = input.find(' ', namePos) + 1;//(input.substr(namePos)).find_first_of(' ') + 1;
-        int dice2Pos = input.find(' ', dice1Pos) + 1;//(input.substr(dice1Pos)).find_first_of(' ') + 1;
+        int namePos = (int)input.find(' ') + 1;//input.find_first_of(' ') + 1;
+        int dice1Pos = (int)input.find(' ', namePos) + 1;//(input.substr(namePos)).find_first_of(' ') + 1;
+        int dice2Pos = (int)input.find(' ', dice1Pos) + 1;//(input.substr(dice1Pos)).find_first_of(' ') + 1;
 
         std::string whoRolled = input.substr(namePos, (dice1Pos - 2) - namePos + 1);
-
         int dice1 = stoi(input.substr(dice1Pos, 1));
         int dice2 = stoi(input.substr(dice2Pos, 1));
 
-        if((*currentPlayerIterator)->getName() != whoRolled) {
-            broadcast("throw_desync");
-            throw GameDesynchronizedException();
-        }
+        std::cout << whoRolled << " rolled " << dice1 << ' ' << dice2 << '\n';
 
-        Player *currentPlayer = *currentPlayerIterator;
-        if(currentPlayer->isInJail())
-            if (dice1 != dice2) {
-                currentPlayer->incrementTimesRolledInJail();
-                if(currentPlayer->getTimesRolledInJail() != 3)
-                    return;
-                else
-                    currentPlayer->money -= JAIL_FEE;
-                    /// and continue making the move
-            }
-        this->makeMove(dice1,dice2);
+        eventDiceRolled(dice1, dice2);
         return;
     }
-    if(input == "throw_desync")
-        throw GameDesynchronizedException();
+    if(input.starts_with("buy")) {
+        int response = (int)input.find(' ') + 1;
+        if(input.substr(response).starts_with("yes"))
+            Player::setBuying(true);
+        else
+            Player::setBuying(false);
+
+        Player::setBuyOrPassPressed(true);
+        return;
+    }
+    if(input.starts_with("licitation")) {
+        int nextWordPos = (int)input.find(' ') + 1;
+        if(input.substr(nextWordPos).starts_with("start")) {
+            auto *bidEntry = new TextEntry(
+                        {0.3f,0.3f},
+                        0.07f,
+                        7,
+                        TextEntry::NUMBERS
+                    );
+            auto *bidLbl = new Label(
+                        "Bid value",
+                        *bidEntry
+                    );
+            auto *bidSubmit = new Button(
+                        "Submit bid",
+                        {0.3f, 0.4f},
+                        {0.05f, 0.05f},
+                        sf::Color::Blue,
+                        sf::Color::Black,
+                        OUTLINE_THICKNESS_DEFAULT,
+                        sf::Color::Red,
+                        sf::Text::Style::Regular,
+                        FONTSIZE_DEFAULT,
+                        &Game::submitLicitation
+                    );
+            uiManager.addElement("bid_entry", bidEntry);
+            uiManager.addElement("bid_label", bidLbl);
+            uiManager.addElement("bid_submit", bidSubmit);
+            licitationInCourse = true;
+        }
+        else
+            if(input.substr(nextWordPos).starts_with("end")) {
+                uiManager.removeElement("bid_entry");
+                uiManager.removeElement("bid_label");
+                uiManager.removeElement("bid_submit");
+                licitationInCourse = false;
+                if(this->hostType == Game::SERVER)
+                    return;
+
+                /// sync the winner
+                int winnerNamePos = (int)input.find(' ', nextWordPos) + 1;
+                int winnerPricePos = (int)input.find(' ', winnerNamePos) + 1;
+
+                std::string winnerName = input.substr(winnerNamePos, winnerPricePos - 2 - winnerNamePos + 1);
+                uint32_t winnerPrice = stoul(input.substr(winnerPricePos));
+
+                Player *winningPlayer = getPlayerByName(winnerName);
+
+                playerBid winningBid {&winningPlayer->getName(),
+                                      winnerPrice};
+
+                this->highestBid = winningBid;
+            }
+
+        return;
+    }
+
+    if(input.starts_with("bid")) {
+        int playerNamePos = (int)input.find(' ') + 1;
+        int pricePos = (int)input.find(' ', playerNamePos) + 1;
+        string playerName = input.substr(playerNamePos, pricePos - 2 - pricePos + 1);
+        uint32_t price = stoul(input.substr(pricePos));
+        restartTimer = true;
+        if(price > highestBid.load().price) {
+            playerBid newHighBid {&getPlayerByName(playerName)->getName(), price};
+            highestBid = newHighBid;
+        }
+        return;
+    }
 
     std::cout << "Unhandled input event from server or self with request *" << input << "*\n";
 }
 
-void Game::broadcastToClients(const std::string& msg, std::vector<std::string> except) {
-    for(auto &connection : connectionsToClients)
-        if(std::find(except.begin(), except.end(), connection->getPeerName()) == except.end())
-            connection->Send(msg);
+void Game::propertyLicitation(Property *prop) {
+    /// server broadcasts licitation start
+    /// the bank offers half the price and if no one raises, the bank keeps it
+    /// licitation ends when no one offers for a LICITATION_TIMEOUT constant time
+    Game *game = Game::getInstancePtr();
+    auto *licitationPriceLabel = new Label(
+                "The highest bid is " + to_string(prop->getPrice() / 2) + " from bank.",
+                {0.3f, 0.2f},
+                sf::Color::Yellow,
+                5,
+                FONTSIZE_DEFAULT,
+                sf::Color::Green
+            );
+    uiManager.addElement("licitation_price", licitationPriceLabel);
+    licitationInCourse = true;
+    playerBid bankBid {Globals::getBankStrPtr(), prop->getPrice() / 2};
+    highestBid = bankBid;
+    if(game->hostType == Game::SERVER) {
+        broadcast("licitation start");
+        eventClientReceivedInput("licitation start");
+
+        auto start = std::chrono::steady_clock::now();
+        std::chrono::duration<float> fsec = std::chrono::steady_clock::now() - start;
+        while(fsec.count() < LICITATION_TIMEOUT) {
+            if(restartTimer) {
+                restartTimer = false;
+                start = std::chrono::steady_clock::now();
+            }
+            fsec = std::chrono::steady_clock::now() - start;
+        }
+
+        broadcast("licitation end "
+        + ((highestBid.load().playerName == nullptr) ? "bank" : (*highestBid.load().playerName))
+        + " "
+        + to_string(highestBid.load().price));
+        eventClientReceivedInput("licitation end");
+    }
+
+    while(licitationInCourse)
+        continue;
+
+    Player *winner = getPlayerByName(*highestBid.load().playerName);
+    uint32_t winningPrice = highestBid.load().price;
+
+    winner->payToBank(winningPrice);
+    winner->addOwnedProperty(prop);
+    prop->setOwner(winner);
+
+    licitationPriceLabel->setText("Licitation won by "
+                                + *highestBid.load().playerName
+                                + " with price "
+                                + to_string(highestBid.load().price));
+
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    uiManager.removeElement("licitation_price");
 }
 
-void Game::broadcastFromClient(const std::string &msg) {
-    connectionToServer->Send("broadcast " + msg);
+bool Game::isFactoryWaitingDiceRoll() const {
+    return factoryWaitingDiceRoll;
 }
 
-void Game::broadcast(const std::string& msg) {
-    if(this->hostType == SERVER)
-        broadcastToClients(msg);
-    else
-        broadcastFromClient(msg);
+Player* Game::getPlayerByName(const std::string &name) {
+    auto it = currentPlayerIterator;
+    do {
+        if((*it)->getName() == name)
+            return *it;
+        ++it;
+    }
+    while(it != currentPlayerIterator);
+    return nullptr;
+}
+
+void Game::updateMoneyLabel() {
+    uiManager.updateMoneyLabel();
 }

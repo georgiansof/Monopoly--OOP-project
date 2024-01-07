@@ -21,7 +21,7 @@ private:
     charType charTypeMask = ANY;
 public:
     TextEntry() = delete;
-    TextEntry(sf::Vector2f position,
+    [[maybe_unused]] TextEntry(sf::Vector2f position,
               sf::Vector2f size,
               sf::Color insideColor = sf::Color::White,
               float outlineThickness = OUTLINE_THICKNESS_DEFAULT,
@@ -48,7 +48,7 @@ public:
     void onClickOutside(sf::Mouse::Button button) override;
     void onTextEntered(char chr) override;
 
-    uint32_t getFontSize() const;
+    [[maybe_unused]] uint32_t getFontSize() const;
     void setCharType(uint8_t _charTypeMask);
     void setMaxLength(int len);
     void setText(std::string str);

@@ -12,8 +12,8 @@ class UIManager;
 
 class UIElement {
 public:
-    enum shapeType {RECTANGULAR, CIRCULAR};
-    enum side_t {LEFT,RIGHT,UP,DOWN};
+    enum shapeType {RECTANGULAR}; //CIRCULAR};
+    enum side_t {UP};//,LEFT,RIGHT,DOWN};
 protected:
     sf::Shape *shape = nullptr;
     sf::Vector2f position;

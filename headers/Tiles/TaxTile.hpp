@@ -14,11 +14,12 @@ private:
     const uint32_t amount;
     const TaxTile::Type type;
 public:
+    void onVisit(Player *player) override;
     TaxTile(TaxTile::Type type, unsigned short boardPosition, unsigned int amount)
             : BoardTile(boardPosition, TAX), amount(amount), type(type) {}
     //[[nodiscard]] uint32_t getAmount() const noexcept;
     TaxTile() = delete;
-    ~TaxTile() = default;
+    ~TaxTile() override = default;
 };
 
 #endif //OOP_TAXTILE_HPP

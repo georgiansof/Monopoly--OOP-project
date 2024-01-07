@@ -34,8 +34,9 @@ public:
         for(int i = 1; i < 5; ++i)
             this->fees[i] = fees[i];
     }
+    void onVisit(Player *plyr) override;
     TrainStation() = delete;
-    ~TrainStation() = default;
+    ~TrainStation() override = default;
 };
 
 #endif //OOP_TRAINSTATION_HPP

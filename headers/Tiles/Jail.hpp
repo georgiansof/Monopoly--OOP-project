@@ -14,9 +14,12 @@ class Jail : public BoardTile {
     Player* occupiedPositionsImprisoned[9] {};
 public:
     Jail();
-    ~Jail() = default;
+    ~Jail() override = default;
+    void onVisit(Player *plyr) override {
+        std::cout<<"Free park at jail by player " << plyr->getName() << '\n';
+    }
     std::pair<sf::Vector2f, uint8_t> addPlayerToJail(Player *playerptr); /// returns the position coordinates and index
-    void removePlayerFromJail(uint8_t positionInsideTile);
+    [[maybe_unused]] void removePlayerFromJail(uint8_t positionInsideTile);
     void removePlayerFromJail(Player *playerPtr);
 };
 

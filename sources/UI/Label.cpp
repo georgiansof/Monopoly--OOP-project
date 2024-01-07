@@ -59,8 +59,11 @@ Label::Label(
 }
 
 
-void Label::onClick(sf::Mouse::Button button) {}
-void Label::onKeyPress(sf::Keyboard::Key key) {}
+void Label::onClick(sf::Mouse::Button button) {if(button!=sf::Mouse::Button::Left) return;}
+void Label::onKeyPress(sf::Keyboard::Key key) {
+    if(key==sf::Keyboard::Key::Apostrophe)
+        cout<<'`'; // warninig dodge
+}
 
 void Label::draw(sf::RenderWindow *window) {
     window->draw(text);
@@ -70,6 +73,6 @@ void Label::setText(const std::string& textstr) {this->text.setString(textstr);}
 void Label::appendText(const std::string& addStr) {
     this->text.setString(this->text.getString() + addStr);
 }
-std::string Label::getText() const noexcept {
+[[maybe_unused]] std::string Label::getText() const noexcept {
     return this->text.getString();
 }

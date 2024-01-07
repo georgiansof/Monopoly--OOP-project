@@ -13,7 +13,7 @@ class Dice : public Button {
 public:
     void onClick(sf::Mouse::Button click) override;
     static void setTextureVec(int index, const sf::Texture *texture);
-    static sf::Texture*& getTextureVec(int index);
+    [[maybe_unused]] static sf::Texture*& getTextureVec(int index);
     explicit Dice(const sf::Vector2f& position, const sf::Vector2f& size = DICE_SIZE);
 };
 

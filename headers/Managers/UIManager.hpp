@@ -26,17 +26,19 @@ class UIManager {
 public:
     UIManager() : dice1(nullptr), dice2(nullptr) {}
     ~UIManager();
-    void addElement(const std::string&, UIElement* elem);
+    void addElement(const std::string& name, UIElement* elem);
+    void removeElement(const std::string& name);
     void createDices(ResourceManager *resourceManager);
     void hideDices();
-    void unhideDices();
-    void hideElement(UIElement *elem);
-    void hideElement(const std::string& name);
-    void unhideElement(UIElement *elem);
-    void unhideElement(const std::string& name);
-    void temporarilyShow(const std::string& name, float seconds);
-    void temporarilyShow(UIElement *elem, float seconds);
+    [[maybe_unused]] void unhideDices();
+    [[maybe_unused]] static void hideElement(UIElement *elem);
+    [[maybe_unused]] void hideElement(const std::string& name);
+    [[maybe_unused]] static void unhideElement(UIElement *elem);
+    [[maybe_unused]] void unhideElement(const std::string& name);
+    [[maybe_unused]] void temporarilyShow(const std::string& name, float seconds);
+    [[maybe_unused]] static void temporarilyShow(UIElement *elem, float seconds);
     UIElement* getElement(const std::string & name);
+    void updateMoneyLabel();
 };
 
 #endif //OOP_UIMANAGER_HPP

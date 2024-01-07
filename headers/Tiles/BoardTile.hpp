@@ -20,14 +20,14 @@ protected:
     sf::Vector2f playerPositions[9];
     Player* occupiedPositions[9] {};
     explicit BoardTile(uint16_t boardPosition, BoardTile::Type type);
-    [[nodiscard]] uint16_t getBoardPosition() const noexcept;
+    [[maybe_unused]] [[nodiscard]] uint16_t getBoardPosition() const noexcept;
 public:
     std::pair<sf::Vector2f, uint8_t> addPlayer(Player *playerPtr); /// returns the position coordinates and index
-    void removePlayer(uint8_t positionInsideTile);
     void removePlayer(Player *playerPtr);
+    void removePlayer(uint8_t positionInsideTile);
     BoardTile() = delete;
     virtual ~BoardTile() = default;
-
+    virtual void onVisit(Player* plyr) = 0;
 };
 
 

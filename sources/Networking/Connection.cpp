@@ -3,26 +3,29 @@
 #include "../../headers/Networking/Connection.hpp"
 #include <chrono>
 #include "../../headers/Game.hpp"
+#include "../../constants.hpp"
 
 int Connection::count = 0;
 std::map<int, std::thread*> Connection::threads;
 
-void Connection::Send(std::string text) {
-    char buffer[text.size() + 1];
+int Connection::Send(std::string text) {
+    char buffer[MAX_TCP_MESSAGE_SIZE];
     strcpy(buffer, text.c_str());
-    SDLNet_TCP_Send(remote, buffer, strlen(buffer) + 1);
+    return SDLNet_TCP_Send(remote, buffer, strlen(buffer) + 1);
 }
 
 std::string Connection::Receive(float timeout, int MAXLEN) {
-    char buffer[MAXLEN + 1];
-    int bytesReturned = 0;
+    if(MAXLEN > MAX_TCP_MESSAGE_SIZE)
+        throw "MAXLEN > MAX_TCP_MESSAGE_SIZE";
+    char buffer[MAX_TCP_MESSAGE_SIZE];
+    int bytesReturned;
     auto start = std::chrono::steady_clock::now();
     std::chrono::duration<float> timer;
     SDLNet_SocketSet socketSet;
     socketSet = SDLNet_AllocSocketSet(1);
     SDLNet_TCP_AddSocket(socketSet, remote);
     while(true) {
-        if(SDLNet_CheckSockets(socketSet, (int)(timeout * 1000))) {
+        if(SDLNet_CheckSockets(socketSet, timeout == NO_TIMEOUT ? INT_MAX : (int)(timeout * 1000))) {
             bytesReturned = SDLNet_TCP_Recv(remote, buffer, MAXLEN);
             if (bytesReturned > 0)
                 return std::string(buffer);
@@ -37,7 +40,7 @@ std::string Connection::Receive(float timeout, int MAXLEN) {
 
 
 
-ConnectionToServer::ConnectionToServer(std::string address, int port, std::string self_name, int MAXREQ) {
+ConnectionToServer::ConnectionToServer(std::string address, int port, std::string self_name) {
     this->port = port;
     IPaddress ip;
     char caddress[20];

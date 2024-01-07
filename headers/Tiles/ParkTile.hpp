@@ -13,10 +13,11 @@ public:
 private:
     ParkTile::Type type;
 public:
+    void onVisit(Player *player) override;
     ParkTile(unsigned short boardPosition, ParkTile::Type type)
     : BoardTile(boardPosition, PARK), type(type) {}
     ParkTile() = delete;
-    ~ParkTile() = default;
+    ~ParkTile() override = default;
 };
 
 #endif //OOP_PARKTILE_HPP

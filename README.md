@@ -16,10 +16,6 @@ Description:
               /     |     \
     Neighborhood  Factory  TrainStation
 
-  Board class will use a circular list of BoardTiles. Tile types will be stored so it will be safe to use static_cast.
-
-  ChanceCards will use runtime polymorphism.
-
 ### Tema 0
 
 - [x] Nume proiect (poate fi schimbat ulterior)
@@ -63,20 +59,20 @@ Description:
 - [x] funcții și atribute `static`
 - [x] STL
 - [x] cât mai multe `const`
-- [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, pe lângă cele 3 derivate deja adăugate
+- [x] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, pe lângă cele 3 derivate deja adăugate
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
-- [ ] tag de `git`: de exemplu `v0.2`
+- [x] tag de `git`: de exemplu `v0.2`
 
 ## Tema 3
 
 #### Cerințe
-- [ ] 2 șabloane de proiectare (design patterns)
-- [ ] o clasă șablon cu sens; minim **2 instanțieri**
-  - [ ] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
+- [x] 2 șabloane de proiectare (design patterns) *FACADE(Connection)* *Proxy(CircularList)* *iterator(CircularList/circular iterator)* *Observer(threaded network listening)*  
+- [x] o clasă șablon cu sens; minim **2 instanțieri**  -> CircularList(Game::playersList, ChanceTile cards)
+  - [x] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri -> Player::getTilesOfOwnedType
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
-- [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
+- [x] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
 ## Resurse
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.0) (Zlib)
-- adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
+- adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit -> used websites.txt

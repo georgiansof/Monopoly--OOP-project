@@ -25,7 +25,7 @@ std::pair<sf::Vector2f, uint8_t> Jail::addPlayerToJail(Player *playerPtr) {
     throw std::runtime_error("Under Jail::addPlayer, player position inside tile overflow!");
 }
 
-void Jail::removePlayerFromJail(uint8_t positionInsideTileJailed) {
+[[maybe_unused]] void Jail::removePlayerFromJail(uint8_t positionInsideTileJailed) {
     occupiedPositionsImprisoned[positionInsideTileJailed] = nullptr;
 }
 

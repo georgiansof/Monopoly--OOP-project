@@ -21,20 +21,32 @@ void Dice::setTextureVec(int index, const sf::Texture *texture) {
                                                           /// but value is not known from the start
 }
 
-sf::Texture*& Dice::getTextureVec(int index) {
+/*[[maybe_unused]] sf::Texture*& Dice::getTextureVec(int index) {
     if(index < 0 || index >= 6)
         throw IndexOutOfBounds(index, typeid(sf::Texture).name());
     return Dice::textures[index];
-}
+}*/
 
 void Dice::onClick(sf::Mouse::Button click) {
+    if(click != sf::Mouse::Button::Left)
+        return;
+
     Game *game = Game::getInstancePtr();
     Player *currentPlayer =
             *game->getCurrentPlayerIterator();
 
-    if(currentPlayer->getName() == game->getHostName()) {
+    if(currentPlayer->getName() == game->getHostName() && game->isFactoryWaitingDiceRoll()) {
         pair<uint8_t, uint8_t> dices;
-        dices = game->diceRoll();
+        dices = Game::diceRoll();
+        std::string broadcastMsg = string("fact_rolled " + to_string(dices.first) + " " + to_string(dices.second));
+        game->broadcast(broadcastMsg);
+        game->eventClientReceivedInput(broadcastMsg);
+        return;
+    }
+
+    if(currentPlayer->getName() == game->getHostName() && !game->isDiceRollingLocked()) {
+        pair<uint8_t, uint8_t> dices;
+        dices = Game::diceRoll();
         std::string broadcastMsg = string("rolled ") + game->getHostName() + " " + to_string(dices.first) + " " + to_string(dices.second);
         game->broadcast(broadcastMsg);
         game->eventClientReceivedInput(broadcastMsg); /// also for server
