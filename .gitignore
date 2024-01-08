@@ -11,10 +11,11 @@ run.sh
 
 ### assets ###
 
-textures
-sounds
+#textures
+#sounds
 GIMP
-fonts
+#fonts
+#*.dll
 
 ### C++ ###
 # Prerequisites
@@ -33,7 +34,6 @@ fonts
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
