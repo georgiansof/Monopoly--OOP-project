@@ -4,6 +4,26 @@ Description:
   Bucharest Monopoly virtual replica with various changes.
 
   [Images](https://imgur.com/a/K7AwzwU)
+
+<details>
+  <summary>Images spoiler ( press here )</summary>
+  <image src="https://imgur.com/heMeBIE.png"/> \
+    -------------------------------------- \
+  <image src="https://imgur.com/W29DvYZ.png"/> \
+     -------------------------------------- \
+  <image src="https://imgur.com/crdTDRw.png"/> \
+     -------------------------------------- \
+  <image src="https://imgur.com/QwCLu7z.png"/> \
+     -------------------------------------- \
+  <image src="https://imgur.com/pcYdf5C.png"/> \ 
+     -------------------------------------- \
+  <image src="https://imgur.com/S3RLILB.png"/> \
+     -------------------------------------- \
+  <image src="https://imgur.com/KS1wLGy.png"/> \ 
+     -------------------------------------- \
+  <image src="https://imgur.com/Oj9XAIX.png"/> \
+     -------------------------------------- \
+</details>
   
   BoardTile class hierarchy tree:
 
