@@ -3,7 +3,7 @@
 Description:
   Bucharest Monopoly virtual replica with various changes.
 
-  ![Images](https://imgur.com/a/K7AwzwU)
+  [Images](https://imgur.com/a/K7AwzwU)
   
   BoardTile class hierarchy tree:
 
