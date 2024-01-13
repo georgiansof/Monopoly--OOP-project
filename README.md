@@ -3,8 +3,6 @@
 Description:
   Bucharest Monopoly virtual replica with various changes.
 
-  [Images](https://imgur.com/a/K7AwzwU)
-
 <details>
   <summary>Images spoiler ( press here )</summary>
 
