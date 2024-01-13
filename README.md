@@ -7,23 +7,18 @@ Description:
 
 <details>
   <summary>Images spoiler ( press here )</summary>
-  <image src="https://imgur.com/heMeBIE.png"/> \
-    -------------------------------------- \
-  <image src="https://imgur.com/W29DvYZ.png"/> \
-     -------------------------------------- \
-  <image src="https://imgur.com/crdTDRw.png"/> \
-     -------------------------------------- \
-  <image src="https://imgur.com/QwCLu7z.png"/> \
-     -------------------------------------- \
-  <image src="https://imgur.com/pcYdf5C.png"/> \ 
-     -------------------------------------- \
-  <image src="https://imgur.com/S3RLILB.png"/> \
-     -------------------------------------- \
-  <image src="https://imgur.com/KS1wLGy.png"/> \ 
-     -------------------------------------- \
-  <image src="https://imgur.com/Oj9XAIX.png"/> \
-     -------------------------------------- \
+
+  <image src="https://imgur.com/heMeBIE.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/W29DvYZ.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/crdTDRw.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/QwCLu7z.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/pcYdf5C.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/S3RLILB.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/KS1wLGy.png"/> <br> -------------------------------------- <br>
+  <image src="https://imgur.com/Oj9XAIX.png"/> <br> -------------------------------------- <br>
+
 </details>
+
   
   BoardTile class hierarchy tree:
 
