@@ -4,8 +4,6 @@ Description:
   Bucharest Monopoly virtual replica with various changes.
   GitHub Actions not fixed to pass mainly because of SDL library.
 
-<details>
-  <summary>Images spoiler ( press here )</summary>
 
   <image src="https://imgur.com/heMeBIE.png"/> <br> -------------------------------------- <br>
   <image src="https://imgur.com/W29DvYZ.png"/> <br> -------------------------------------- <br>
@@ -16,7 +14,6 @@ Description:
   <image src="https://imgur.com/KS1wLGy.png"/> <br> -------------------------------------- <br>
   <image src="https://imgur.com/Oj9XAIX.png"/> <br> -------------------------------------- <br>
 
-</details>
 
 
 
