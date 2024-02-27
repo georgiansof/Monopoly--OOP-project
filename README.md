@@ -1,8 +1,7 @@
 # MonOOPoly
 
-  Bucharest Monopoly virtual replica with various changes. Features a Client - Server approach where a player is also host. Every player connects on a different port to allow multiple connections from the same computer.
-  GitHub Actions not fixed to pass mainly because of SDL library.
-
+  Bucharest Monopoly virtual replica with various changes. Features a Client - Server approach where a player is also host. Every player connects on a different port to allow multiple connections from the same computer. \
+  GitHub Actions not fixed to pass mainly because of SDL library. 
 
   <image src="https://imgur.com/heMeBIE.png"/> <br> -------------------------------------- <br>
   <image src="https://imgur.com/W29DvYZ.png"/> <br> -------------------------------------- <br>
