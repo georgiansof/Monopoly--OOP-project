@@ -1,6 +1,5 @@
 # MonOOPoly
 
-Description:
   Bucharest Monopoly virtual replica with various changes.
   GitHub Actions not fixed to pass mainly because of SDL library.
 
